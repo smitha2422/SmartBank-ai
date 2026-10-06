@@ -701,6 +701,9 @@ def render_client_management_view():
         st.markdown("#### ➕ Add New Pre-Contact Lead")
         st.caption("Input client demographic and financial details. AI will calculate opportunity scores and safe deposit limits automatically.")
         
+        if "add_status_msg" in st.session_state:
+            st.success(st.session_state.pop("add_status_msg"))
+            
         with st.form("add_client_form"):
             ac1, ac2, ac3 = st.columns(3)
             with ac1:
@@ -754,46 +757,60 @@ def render_client_management_view():
                 opp_score = int(round(prob * 100))
                 priority = "HIGH" if opp_score >= 60 else ("MEDIUM" if opp_score >= 35 else "LOW")
                 
-                created = db.create_customer(client_data, creator_name=st.session_state["user_name"])
+                created = db.create_customer(client_data, creator_name=st.session_state.get("user_name", "Staff Operator"))
                 db.update_customer_assessment_score(created["customer_id"], opp_score, priority)
                 
-                st.success(f"✅ Lead Created Successfully! Customer ID: **{created['customer_id']}** | AI Propensity Score: **{opp_score}/100** ({priority} Priority)")
+                st.session_state["add_status_msg"] = f"✅ Lead Created Successfully! Customer ID: **{created['customer_id']}** | AI Propensity Score: **{opp_score}/100** ({priority} Priority)"
                 st.rerun()
 
     with tab_edit:
         st.markdown("#### ✏️ Update Existing Client Profile")
+        
+        if "edit_status_msg" in st.session_state:
+            st.success(st.session_state.pop("edit_status_msg"))
+        if "edit_error_msg" in st.session_state:
+            st.error(st.session_state.pop("edit_error_msg"))
+            
         all_custs = db.list_customers(limit=100)
         if not all_custs:
             st.info("No customers found to edit.")
         else:
             cust_map = {f"{c['customer_id']} — {c['name']} ({c['job']})": c for c in all_custs}
-            selected_label = st.selectbox("Select Customer to Modify", list(cust_map.keys()))
+            selected_label = st.selectbox("Select Customer to Modify", list(cust_map.keys()), key="select_cust_to_modify")
             selected_cust = cust_map[selected_label]
+            cid = selected_cust["customer_id"]
             
-            with st.form("edit_client_form"):
+            with st.form(key=f"edit_client_form_{cid}"):
                 e1, e2, e3 = st.columns(3)
                 with e1:
-                    e_name = st.text_input("Name", value=selected_cust.get("name", ""))
-                    e_email = st.text_input("Email", value=selected_cust.get("email", ""))
-                    e_phone = st.text_input("Phone", value=selected_cust.get("phone", ""))
-                    e_age = st.number_input("Age", min_value=18, max_value=100, value=int(selected_cust.get("age", 40)))
-                    e_job = st.selectbox("Job", [
-                        "management", "technician", "entrepreneur", "blue-collar",
-                        "retired", "admin.", "services", "self-employed",
-                        "unemployed", "housemaid", "student"
-                    ], index=["management", "technician", "entrepreneur", "blue-collar", "retired", "admin.", "services", "self-employed", "unemployed", "housemaid", "student"].index(selected_cust.get("job", "technician")) if selected_cust.get("job") in ["management", "technician", "entrepreneur", "blue-collar", "retired", "admin.", "services", "self-employed", "unemployed", "housemaid", "student"] else 0)
+                    e_name = st.text_input("Name", value=selected_cust.get("name", ""), key=f"e_name_{cid}")
+                    e_email = st.text_input("Email", value=selected_cust.get("email", ""), key=f"e_email_{cid}")
+                    e_phone = st.text_input("Phone", value=selected_cust.get("phone", ""), key=f"e_phone_{cid}")
+                    e_age = st.number_input("Age", min_value=18, max_value=100, value=int(selected_cust.get("age", 40)), key=f"e_age_{cid}")
+                    job_opts = ["management", "technician", "entrepreneur", "blue-collar", "retired", "admin.", "services", "self-employed", "unemployed", "housemaid", "student"]
+                    curr_job = str(selected_cust.get("job", "technician")).lower()
+                    e_job = st.selectbox("Job", job_opts, index=job_opts.index(curr_job) if curr_job in job_opts else 0, key=f"e_job_{cid}")
                 with e2:
-                    e_marital = st.selectbox("Marital", ["married", "single", "divorced"], index=["married", "single", "divorced"].index(selected_cust.get("marital", "married")) if selected_cust.get("marital") in ["married", "single", "divorced"] else 0)
-                    e_edu = st.selectbox("Education", ["tertiary", "secondary", "primary", "unknown"], index=["tertiary", "secondary", "primary", "unknown"].index(selected_cust.get("education", "secondary")) if selected_cust.get("education") in ["tertiary", "secondary", "primary", "unknown"] else 0)
-                    e_def = st.selectbox("Default Credit", ["no", "yes"], index=0 if str(selected_cust.get("default_credit", "no")).lower() == "no" else 1)
-                    e_bal = st.number_input("Account Balance (€)", value=float(selected_cust.get("balance", 1000.0)), step=100.0)
-                    e_sal = st.number_input("Monthly Salary (€)", value=float(selected_cust.get("salary_monthly", 3500.0)), step=100.0)
+                    marital_opts = ["married", "single", "divorced"]
+                    curr_marital = str(selected_cust.get("marital", "married")).lower()
+                    e_marital = st.selectbox("Marital", marital_opts, index=marital_opts.index(curr_marital) if curr_marital in marital_opts else 0, key=f"e_marital_{cid}")
+                    
+                    edu_opts = ["tertiary", "secondary", "primary", "unknown"]
+                    curr_edu = str(selected_cust.get("education", "secondary")).lower()
+                    e_edu = st.selectbox("Education", edu_opts, index=edu_opts.index(curr_edu) if curr_edu in edu_opts else 0, key=f"e_edu_{cid}")
+                    
+                    e_def = st.selectbox("Default Credit", ["no", "yes"], index=0 if str(selected_cust.get("default_credit", "no")).lower() == "no" else 1, key=f"e_def_{cid}")
+                    e_bal = st.number_input("Account Balance (€)", value=float(selected_cust.get("balance", 1000.0)), step=100.0, key=f"e_bal_{cid}")
+                    e_sal = st.number_input("Monthly Salary (€)", value=float(selected_cust.get("salary_monthly", 3500.0)), step=100.0, key=f"e_sal_{cid}")
                 with e3:
-                    e_house = st.selectbox("Housing Loan", ["no", "yes"], index=0 if str(selected_cust.get("housing", "no")).lower() == "no" else 1)
-                    e_h_emi = st.number_input("Housing EMI (€/mo)", value=float(selected_cust.get("housing_emi", 0.0)), step=50.0)
-                    e_loan = st.selectbox("Personal Loan", ["no", "yes"], index=0 if str(selected_cust.get("loan", "no")).lower() == "no" else 1)
-                    e_l_emi = st.number_input("Personal Loan EMI (€/mo)", value=float(selected_cust.get("personal_loan_emi", 0.0)), step=50.0)
-                    e_pout = st.selectbox("Previous Outcome", ["success", "failure", "other", "unknown"], index=["success", "failure", "other", "unknown"].index(selected_cust.get("poutcome", "unknown")) if selected_cust.get("poutcome") in ["success", "failure", "other", "unknown"] else 3)
+                    e_house = st.selectbox("Housing Loan", ["no", "yes"], index=0 if str(selected_cust.get("housing", "no")).lower() == "no" else 1, key=f"e_house_{cid}")
+                    e_h_emi = st.number_input("Housing EMI (€/mo)", value=float(selected_cust.get("housing_emi", 0.0)), step=50.0, key=f"e_h_emi_{cid}")
+                    e_loan = st.selectbox("Personal Loan", ["no", "yes"], index=0 if str(selected_cust.get("loan", "no")).lower() == "no" else 1, key=f"e_loan_{cid}")
+                    e_l_emi = st.number_input("Personal Loan EMI (€/mo)", value=float(selected_cust.get("personal_loan_emi", 0.0)), step=50.0, key=f"e_l_emi_{cid}")
+                    
+                    pout_opts = ["success", "failure", "other", "unknown"]
+                    curr_pout = str(selected_cust.get("poutcome", "unknown")).lower()
+                    e_pout = st.selectbox("Previous Outcome", pout_opts, index=pout_opts.index(curr_pout) if curr_pout in pout_opts else 3, key=f"e_pout_{cid}")
                     
                 col_save, col_del = st.columns([3, 1])
                 with col_save:
@@ -809,13 +826,32 @@ def render_client_management_view():
                         "poutcome": e_pout, "salary_monthly": e_sal,
                         "housing_emi": e_h_emi, "personal_loan_emi": e_l_emi
                     }
-                    db.update_customer_record(selected_cust["customer_id"], upd_data)
-                    st.success(f"✅ Successfully updated record for {e_name} ({selected_cust['customer_id']}) in SQLite database!")
+                    db.update_customer_record(cid, upd_data)
+                    
+                    # Update propensity score with modified features
+                    try:
+                        input_df = pd.DataFrame([{
+                            "age": int(e_age), "job": str(e_job), "marital": str(e_marital),
+                            "education": str(e_edu), "default": str(e_def), "balance": float(e_bal),
+                            "housing": str(e_house), "loan": str(e_loan), "poutcome": str(e_pout),
+                            "pdays": int(selected_cust.get("pdays", -1)), "previous": int(selected_cust.get("previous", 0))
+                        }])
+                        if model_pipeline:
+                            prob = float(model_pipeline.predict_proba(input_df)[0][1])
+                            opp_score = int(round(prob * 100))
+                            priority = "HIGH" if opp_score >= 60 else ("MEDIUM" if opp_score >= 35 else "LOW")
+                            db.update_customer_assessment_score(cid, opp_score, priority)
+                    except Exception:
+                        pass
+                        
+                    st.session_state["edit_status_msg"] = f"✅ Successfully updated record for **{e_name}** ({cid}) in SQLite database!"
                     st.rerun()
+                    
                 if del_btn:
-                    db.delete_customer(selected_cust["customer_id"])
-                    st.warning(f"Deleted lead {selected_cust['customer_id']}.")
+                    db.delete_customer(cid)
+                    st.session_state["edit_status_msg"] = f"🗑️ Deleted lead **{cid}** ({e_name}) from SQLite database."
                     st.rerun()
+
 
 def render_assessment_view():
     st.markdown("""

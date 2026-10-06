@@ -993,6 +993,7 @@ def update_customer_record(customer_id: str, data: Dict[str, Any]) -> Optional[D
     conn = get_connection()
     cursor = conn.cursor()
     
+    cid_clean = str(customer_id).strip()
     fields = [
         "name", "email", "phone", "age", "job", "marital", "education",
         "default_credit", "balance", "housing", "loan", "poutcome", "pdays", "previous",
@@ -1002,31 +1003,36 @@ def update_customer_record(customer_id: str, data: Dict[str, Any]) -> Optional[D
     updates = []
     params = []
     for f in fields:
-        if f in data:
+        if f in data and data[f] is not None:
             val = data[f]
-            if f in ["age", "pdays", "previous"]: val = int(val)
-            elif f in ["balance", "salary_monthly", "housing_emi", "personal_loan_emi"]: val = float(val)
-            else: val = str(val).lower() if f in ["job", "marital", "education", "default_credit", "housing", "loan", "poutcome"] else str(val)
+            if f in ["age", "pdays", "previous"]:
+                try: val = int(val)
+                except: val = 0
+            elif f in ["balance", "salary_monthly", "housing_emi", "personal_loan_emi"]:
+                try: val = float(val)
+                except: val = 0.0
+            else:
+                val = str(val).lower() if f in ["job", "marital", "education", "default_credit", "housing", "loan", "poutcome"] else str(val)
             updates.append(f"{f} = ?")
             params.append(val)
             
     if not updates:
         conn.close()
-        return get_customer_by_id(customer_id)
+        return get_customer_by_id(cid_clean)
         
-    params.append(customer_id)
-    query = f"UPDATE customers SET {', '.join(updates)} WHERE customer_id = ? OR id = ?"
-    params.append(customer_id)
+    params.append(cid_clean)
+    query = f"UPDATE customers SET {', '.join(updates)} WHERE customer_id = ?"
     cursor.execute(query, tuple(params))
     conn.commit()
     conn.close()
-    return get_customer_by_id(customer_id)
+    return get_customer_by_id(cid_clean)
 
 def delete_customer(customer_id: str) -> bool:
     """Deletes a customer record from SQLite."""
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM customers WHERE customer_id = ? OR id = ?", (customer_id, customer_id))
+    cid_clean = str(customer_id).strip()
+    cursor.execute("DELETE FROM customers WHERE customer_id = ?", (cid_clean,))
     deleted = cursor.rowcount > 0
     conn.commit()
     conn.close()
