@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBank AI — Pre-Contact Term Deposit Campaign Intelligence</title>
+  <meta name="description" content="AI-driven pre-contact campaign intelligence and term deposit subscription prediction for retail banking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">SmartBank<span class="brand-accent">.AI</span></span>
+          <span class="brand-tag">Campaign Intelligence Engine</span>
+        </div>
+      </div>
+      <div class="nav-status">
+        <span class="status-indicator live"></span>
+        <span id="api-status-text">Engine Online (Port 8000)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & KPI Banner -->
+  <main class="main-container">
+    
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        UCI Bank Marketing Benchmark • 100% Leakage-Safe
+      </div>
+      <h1 class="hero-title">
+        Pre-Contact Deposit Subscription Prediction & Intelligence
+      </h1>
+      <p class="hero-subtitle">
+        Empowering bank campaign managers to accurately identify high-opportunity term deposit subscribers 
+        <strong>prior to initiation of phone outreach</strong>, preventing post-contact feature leakage.
+      </p>
+
+      <!-- Metric Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Dataset Population</span>
+            <span class="kpi-icon">📊</span>
+          </div>
+          <div class="kpi-value" id="kpi-rows">45,211</div>
+          <div class="kpi-subtext">UCI Bank Marketing Records</div>
+        </div>
+
+        <div class="kpi-card highlight">
+          <div class="kpi-header">
+            <span class="kpi-label">Final Production Model</span>
+            <span class="kpi-icon">🏆</span>
+          </div>
+          <div class="kpi-value" id="kpi-model">Random Forest</div>
+          <div class="kpi-subtext">Balanced Class-Weighted Ensemble</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Unseen Test ROC-AUC</span>
+            <span class="kpi-icon">📈</span>
+          </div>
+          <div class="kpi-value" id="kpi-roc">0.7288</div>
+          <div class="kpi-subtext">Evaluated on 9,043 Isolated Records</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Positive Class F1-Score</span>
+            <span class="kpi-icon">🎯</span>
+          </div>
+          <div class="kpi-value" id="kpi-f1">0.3632</div>
+          <div class="kpi-subtext">11.7% Minority Deposit Subscribers</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Simulator Section -->
+    <section class="simulator-section" id="simulator">
+      <div class="section-heading">
+        <span class="section-tag">Interactive Simulation</span>
+        <h2>Client Opportunity Simulator</h2>
+        <p>Test individual customer profiles before committing marketing call resources.</p>
+      </div>
+
+      <!-- Quick Preset Demo Buttons -->
+      <div class="presets-container">
+        <span class="presets-label">Quick Test Archetypes:</span>
+        <button type="button" class="preset-btn" onclick="loadPreset('high_senior')">💎 Affluent Senior (High Prob)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('repeat_success')">🔁 Previous Convert (High Prob)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('indebted_worker')">💳 Indebted Worker (Low Prob)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('middle_tech')">💼 Standard Tech Pro (Medium)</button>
+      </div>
+
+      <div class="simulator-layout">
+        <!-- Input Form -->
+        <div class="simulator-card form-card">
+          <h3 class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Pre-Contact Customer Profile
+          </h3>
+
+          <form id="prediction-form" onsubmit="handlePredict(event)">
+            <div class="form-grid">
+              
+              <div class="form-group">
+                <label for="age">Customer Age</label>
+                <input type="number" id="age" name="age" min="18" max="100" value="58" required>
+              </div>
+
+              <div class="form-group">
+                <label for="balance">Yearly Balance (€)</label>
+                <input type="number" id="balance" name="balance" value="3250" required>
+              </div>
+
+              <div class="form-group">
+                <label for="job">Occupation / Job</label>
+                <select id="job" name="job">
+                  <option value="management" selected>Management</option>
+                  <option value="technician">Technician</option>
+                  <option value="blue-collar">Blue-Collar</option>
+                  <option value="admin.">Administrative</option>
+                  <option value="services">Services</option>
+                  <option value="retired">Retired</option>
+                  <option value="self-employed">Self-Employed</option>
+                  <option value="entrepreneur">Entrepreneur</option>
+                  <option value="unemployed">Unemployed</option>
+                  <option value="student">Student</option>
+                  <option value="housemaid">Housemaid</option>
+                  <option value="unknown">Unknown</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="marital">Marital Status</label>
+                <select id="marital" name="marital">
+                  <option value="married" selected>Married</option>
+                  <option value="single">Single</option>
+                  <option value="divorced">Divorced</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="education">Education Level</label>
+                <select id="education" name="education">
+                  <option value="tertiary" selected>Tertiary (Higher)</option>
+                  <option value="secondary">Secondary (High School)</option>
+                  <option value="primary">Primary</option>
+                  <option value="unknown">Unknown</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="housing">Housing Loan</label>
+                <select id="housing" name="housing">
+                  <option value="no" selected>No (Debt-Free)</option>
+                  <option value="yes">Yes (Has Mortgage)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="loan">Personal Loan</label>
+                <select id="loan" name="loan">
+                  <option value="no" selected>No (No Personal Loan)</option>
+                  <option value="yes">Yes (Active Loan)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="default">Credit Default History</label>
+                <select id="default" name="default">
+                  <option value="no" selected>No (Clean Record)</option>
+                  <option value="yes">Yes (Has Default)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="poutcome">Previous Campaign Outcome</label>
+                <select id="poutcome" name="poutcome">
+                  <option value="success" selected>Success (Subscribed Previously)</option>
+                  <option value="failure">Failure</option>
+                  <option value="other">Other</option>
+                  <option value="unknown">Unknown / Not Contacted</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="previous">Previous Campaign Contacts</label>
+                <input type="number" id="previous" name="previous" min="0" max="100" value="2" required>
+              </div>
+
+            </div>
+
+            <button type="submit" class="submit-btn" id="predict-btn">
+              <span>Analyze Customer Profile</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Result Card -->
+        <div class="simulator-card result-card" id="result-container">
+          <div class="result-header">
+            <span class="card-title">Pre-Contact Campaign Assessment</span>
+            <span class="badge priority-badge" id="priority-badge">HIGH PRIORITY</span>
+          </div>
+
+          <div class="score-display">
+            <div class="radial-gauge">
+              <svg viewBox="0 0 100 100" class="gauge-svg">
+                <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                <circle class="gauge-fill" id="gauge-fill-circle" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="75"></circle>
+              </svg>
+              <div class="gauge-inner">
+                <span class="score-number" id="opp-score">72</span>
+                <span class="score-scale">/ 100</span>
+              </div>
+            </div>
+
+            <div class="score-context">
+              <div class="pred-label" id="pred-label">Likely to Subscribe</div>
+              <div class="prob-detail">Raw ML Probability: <strong id="raw-prob">0.7240</strong></div>
+              <p class="rec-text" id="rec-text">
+                High engagement opportunity: Assign to senior relationship manager with premium deposit terms.
+              </p>
+            </div>
+          </div>
+
+          <div class="signals-box">
+            <span class="signals-title">Active Predictive Signals:</span>
+            <ul class="signals-list" id="signals-list">
+              <li class="signal-item positive">Previous Campaign Success (+Strong)</li>
+              <li class="signal-item positive">No Housing Loan Obligation (+Positive)</li>
+              <li class="signal-item positive">Healthy Account Balance (>€2,000) (+Positive)</li>
+            </ul>
+          </div>
+
+          <div class="disclaimer-footer">
+            <span class="disclaimer-icon">ℹ️</span>
+            <span id="disclaimer-text">
+              The Opportunity Score translates ML probability into a campaign prioritization signal. It represents statistical association and does not guarantee subscription.
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Why This System / 4 Core Pillars -->
+    <section class="pillars-section">
+      <div class="section-heading">
+        <span class="section-tag">Design Principles</span>
+        <h2>Why SmartBank AI?</h2>
+        <p>Built strictly according to enterprise banking ML governance standards.</p>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-number">01</div>
+          <h3 class="pillar-title">Leakage Safe</h3>
+          <p class="pillar-desc">
+            Excludes <code>duration</code>, <code>contact</code>, <code>day</code>, <code>month</code>, and <code>campaign</code>. 
+            Predictions use only parameters available strictly before initiating outreach.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-number">02</div>
+          <h3 class="pillar-title">Imbalance Aware</h3>
+          <p class="pillar-desc">
+            With only 11.7% historical subscribers, models use <code>class_weight='balanced'</code> and are evaluated on 
+            Precision, Recall, F1, and ROC-AUC rather than misleading naive accuracy.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-number">03</div>
+          <h3 class="pillar-title">Actionable Tiers</h3>
+          <p class="pillar-desc">
+            Converts ML probabilities into 0-100 Opportunity Scores with actionable triage 
+            (HIGH / MEDIUM / LOW) to maximize bank agent conversion hours.
+          </p>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-number">04</div>
+          <h3 class="pillar-title">Explainable Signals</h3>
+          <p class="pillar-desc">
+            Extracts clear feature associations and model coefficients while explicitly distinguishing 
+            predictive correlation from causal claims.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Model Comparison & Artifacts -->
+    <section class="insights-section">
+      <div class="section-heading">
+        <span class="section-tag">Validation Benchmark</span>
+        <h2>Model Selection & Performance Analysis</h2>
+        <p>Comparing baseline Logistic Regression with Random Forest on the validation partition.</p>
+      </div>
+
+      <div class="insights-grid">
+        <!-- Metrics Comparison Table -->
+        <div class="insight-card">
+          <h3 class="card-title">Validation Metric Comparison</h3>
+          <div class="table-responsive">
+            <table class="metric-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Logistic Regression</th>
+                  <th>Random Forest (Best)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Accuracy</td>
+                  <td>70.90%</td>
+                  <td><strong>78.45%</strong></td>
+                </tr>
+                <tr>
+                  <td>Precision (Positive)</td>
+                  <td>22.31%</td>
+                  <td><strong>28.61%</strong></td>
+                </tr>
+                <tr>
+                  <td>Recall (Positive)</td>
+                  <td><strong>59.93%</strong></td>
+                  <td>56.38%</td>
+                </tr>
+                <tr>
+                  <td>F1-Score</td>
+                  <td>0.3251</td>
+                  <td><strong>0.3796</strong></td>
+                </tr>
+                <tr>
+                  <td>ROC-AUC</td>
+                  <td>0.7183</td>
+                  <td><strong>0.7393</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-note">
+            💡 Selection Rationale: Random Forest achieved superior F1 (+0.0545) and ROC-AUC (+0.0210), delivering the optimal trade-off for minority deposit detection.
+          </div>
+        </div>
+
+        <!-- Top Feature Signals -->
+        <div class="insight-card">
+          <h3 class="card-title">Top Pre-Contact Predictive Signals</h3>
+          <div class="signals-bars" id="feature-importance-bars">
+            <div class="fi-row">
+              <span class="fi-name">Age</span>
+              <div class="fi-bar-wrap"><div class="fi-bar" style="width: 100%;"></div></div>
+              <span class="fi-val">0.1526</span>
+            </div>
+            <div class="fi-row">
+              <span class="fi-name">Yearly Balance</span>
+              <div class="fi-bar-wrap"><div class="fi-bar" style="width: 95%;"></div></div>
+              <span class="fi-val">0.1462</span>
+            </div>
+            <div class="fi-row">
+              <span class="fi-name">Previous Success (poutcome)</span>
+              <div class="fi-bar-wrap"><div class="fi-bar" style="width: 94%;"></div></div>
+              <span class="fi-val">0.1447</span>
+            </div>
+            <div class="fi-row">
+              <span class="fi-name">Previous Contacts Count</span>
+              <div class="fi-bar-wrap"><div class="fi-bar" style="width: 60%;"></div></div>
+              <span class="fi-val">0.0922</span>
+            </div>
+            <div class="fi-row">
+              <span class="fi-name">No Housing Loan</span>
+              <div class="fi-bar-wrap"><div class="fi-bar" style="width: 48%;"></div></div>
+              <span class="fi-val">0.0737</span>
+            </div>
+          </div>
+          <p class="fi-disclaimer">
+            * Values denote feature importance in the fitted Random Forest pipeline. Predictive association does not imply causality.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <strong>SmartBank AI</strong> — Pre-Contact Term Deposit Subscription & Campaign Intelligence
+      </div>
+      <div class="footer-right">
+        Dataset: UCI Bank Marketing (45,211 rows) • Gupio Submission Ready
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

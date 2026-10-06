@@ -1,0 +1,196 @@
+{
+    "model_type": "Random Forest",
+    "interpretability_notice": "Features represent predictive associations in the model, not causal drivers.",
+    "top_features": [
+        {
+            "feature": "age",
+            "importance": 0.15262
+        },
+        {
+            "feature": "balance",
+            "importance": 0.14621
+        },
+        {
+            "feature": "poutcome_success",
+            "importance": 0.14472
+        },
+        {
+            "feature": "previous",
+            "importance": 0.09219
+        },
+        {
+            "feature": "housing_no",
+            "importance": 0.07373
+        },
+        {
+            "feature": "housing_yes",
+            "importance": 0.06736
+        },
+        {
+            "feature": "poutcome_unknown",
+            "importance": 0.06161
+        },
+        {
+            "feature": "marital_married",
+            "importance": 0.02475
+        },
+        {
+            "feature": "poutcome_failure",
+            "importance": 0.02181
+        },
+        {
+            "feature": "loan_yes",
+            "importance": 0.01958
+        },
+        {
+            "feature": "marital_single",
+            "importance": 0.01886
+        },
+        {
+            "feature": "loan_no",
+            "importance": 0.0176
+        },
+        {
+            "feature": "job_blue-collar",
+            "importance": 0.01745
+        },
+        {
+            "feature": "education_tertiary",
+            "importance": 0.01574
+        },
+        {
+            "feature": "job_retired",
+            "importance": 0.01424
+        }
+    ],
+    "all_features": [
+        {
+            "feature": "age",
+            "importance": 0.15262
+        },
+        {
+            "feature": "balance",
+            "importance": 0.14621
+        },
+        {
+            "feature": "poutcome_success",
+            "importance": 0.14472
+        },
+        {
+            "feature": "previous",
+            "importance": 0.09219
+        },
+        {
+            "feature": "housing_no",
+            "importance": 0.07373
+        },
+        {
+            "feature": "housing_yes",
+            "importance": 0.06736
+        },
+        {
+            "feature": "poutcome_unknown",
+            "importance": 0.06161
+        },
+        {
+            "feature": "marital_married",
+            "importance": 0.02475
+        },
+        {
+            "feature": "poutcome_failure",
+            "importance": 0.02181
+        },
+        {
+            "feature": "loan_yes",
+            "importance": 0.01958
+        },
+        {
+            "feature": "marital_single",
+            "importance": 0.01886
+        },
+        {
+            "feature": "loan_no",
+            "importance": 0.0176
+        },
+        {
+            "feature": "job_blue-collar",
+            "importance": 0.01745
+        },
+        {
+            "feature": "education_tertiary",
+            "importance": 0.01574
+        },
+        {
+            "feature": "job_retired",
+            "importance": 0.01424
+        },
+        {
+            "feature": "education_primary",
+            "importance": 0.0117
+        },
+        {
+            "feature": "job_student",
+            "importance": 0.01022
+        },
+        {
+            "feature": "poutcome_other",
+            "importance": 0.01
+        },
+        {
+            "feature": "education_secondary",
+            "importance": 0.00915
+        },
+        {
+            "feature": "marital_divorced",
+            "importance": 0.00775
+        },
+        {
+            "feature": "job_management",
+            "importance": 0.00708
+        },
+        {
+            "feature": "job_admin.",
+            "importance": 0.00653
+        },
+        {
+            "feature": "job_services",
+            "importance": 0.00637
+        },
+        {
+            "feature": "job_technician",
+            "importance": 0.00628
+        },
+        {
+            "feature": "education_unknown",
+            "importance": 0.00593
+        },
+        {
+            "feature": "job_self-employed",
+            "importance": 0.00522
+        },
+        {
+            "feature": "job_entrepreneur",
+            "importance": 0.00509
+        },
+        {
+            "feature": "default_yes",
+            "importance": 0.00466
+        },
+        {
+            "feature": "job_housemaid",
+            "importance": 0.00463
+        },
+        {
+            "feature": "job_unemployed",
+            "importance": 0.00442
+        },
+        {
+            "feature": "default_no",
+            "importance": 0.00422
+        },
+        {
+            "feature": "job_unknown",
+            "importance": 0.00228
+        }
+    ]
+}

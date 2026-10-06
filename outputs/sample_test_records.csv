@@ -1,0 +1,11 @@
+job,marital,education,default,housing,loan,poutcome,age,balance,previous,actual_subscribed,predicted_probability,opportunity_score,campaign_priority
+retired,divorced,primary,no,no,no,success,64,109,2,1,0.9094,90.9,HIGH
+blue-collar,single,unknown,no,no,no,other,31,6281,3,1,0.5592,55.9,MEDIUM
+management,married,secondary,no,yes,no,failure,49,99,1,1,0.2607,26.1,LOW
+management,married,tertiary,no,no,no,success,51,469,2,1,0.95,95.0,HIGH
+admin.,single,tertiary,no,no,no,unknown,51,394,0,1,0.5494,54.9,MEDIUM
+blue-collar,married,primary,no,yes,yes,unknown,40,640,0,0,0.2111,21.1,LOW
+technician,married,secondary,no,yes,no,unknown,44,378,0,0,0.2934,29.3,LOW
+services,married,secondary,no,yes,no,unknown,31,356,0,0,0.2803,28.0,LOW
+blue-collar,married,primary,no,yes,no,unknown,36,655,0,0,0.2822,28.2,LOW
+services,single,secondary,no,yes,no,unknown,34,1921,0,0,0.41,41.0,MEDIUM

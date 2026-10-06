@@ -1,0 +1,36 @@
+{
+    "dataset_name": "UCI Bank Marketing (bank-full.csv)",
+    "rows": 45211,
+    "columns": 17,
+    "duplicate_rows": 0,
+    "missing_values_total": 0,
+    "target_distribution": {
+        "counts": {
+            "no": 39922,
+            "yes": 5289
+        },
+        "percentages": {
+            "no": 88.3,
+            "yes": 11.7
+        }
+    },
+    "all_columns": [
+        "age",
+        "job",
+        "marital",
+        "education",
+        "default",
+        "balance",
+        "housing",
+        "loan",
+        "contact",
+        "day",
+        "month",
+        "duration",
+        "campaign",
+        "pdays",
+        "previous",
+        "poutcome",
+        "y"
+    ]
+}

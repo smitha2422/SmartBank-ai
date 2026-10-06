@@ -1,0 +1,60 @@
+{
+    "validation_comparison": {
+        "logistic_regression": {
+            "model_name": "Logistic Regression",
+            "accuracy": 0.709,
+            "precision": 0.2231,
+            "recall": 0.5993,
+            "f1": 0.3251,
+            "roc_auc": 0.7183,
+            "confusion_matrix": [
+                [
+                    4622,
+                    1766
+                ],
+                [
+                    339,
+                    507
+                ]
+            ]
+        },
+        "random_forest": {
+            "model_name": "Random Forest",
+            "accuracy": 0.7845,
+            "precision": 0.2861,
+            "recall": 0.5638,
+            "f1": 0.3796,
+            "roc_auc": 0.7393,
+            "confusion_matrix": [
+                [
+                    5198,
+                    1190
+                ],
+                [
+                    369,
+                    477
+                ]
+            ]
+        }
+    },
+    "selected_model": "Random Forest",
+    "selection_rationale": "Selected based primarily on Validation F1-score & ROC-AUC for minority positive class detection.",
+    "unseen_test_performance": {
+        "model_name": "Random Forest",
+        "accuracy": 0.7786,
+        "precision": 0.2737,
+        "recall": 0.5397,
+        "f1": 0.3632,
+        "roc_auc": 0.7288,
+        "confusion_matrix": [
+            [
+                6470,
+                1515
+            ],
+            [
+                487,
+                571
+            ]
+        ]
+    }
+}
