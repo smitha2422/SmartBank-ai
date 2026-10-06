@@ -1115,7 +1115,7 @@ def render_explainability_view():
         ax.set_title("Pre-Contact Feature Importance (Gini Impurity Reduction)", color="#FFFFFF", fontsize=13, fontweight="bold", pad=15)
         ax.set_xlabel("Relative Importance Weight", color="#94A3B8", fontsize=11)
         ax.tick_params(colors="#CBD5E1", labelsize=10)
-        ax.grid(color="rgba(255,255,255,0.06)", linestyle="--")
+        ax.grid(color="#334155", linestyle="--", alpha=0.6)
         
         st.pyplot(fig)
         
@@ -1154,14 +1154,19 @@ def render_telemetry_view():
     t4.metric("Model Version", "v1.0.0", delta="Random Forest")
     
     st.markdown("### 🛡️ Pre-Contact Leakage Guard Audit Trail")
+    st.markdown("""
+    To ensure the model is **100% operationalizable BEFORE relationship managers place a phone call**, all post-contact and execution-time variables have been strictly excluded from feature pipelines.
+    """)
+    
     leakage_table = pd.DataFrame([
-        {"Feature": "duration", "Status": "❌ EXCLUDED (LEAKAGE)", "Reason": "Duration of call is only known after call concludes; impossible to use pre-contact."},
-        {"Feature": "contact", "Status": "❌ EXCLUDED (LEAKAGE)", "Reason": "Communication channel selection occurs during/after campaign orchestration."},
-        {"Feature": "day", "Status": "❌ EXCLUDED (LEAKAGE)", "Reason": "Specific calendar day of contact is an execution artifact, not client property."},
-        {"Feature": "month", "Status": "❌ EXCLUDED (LEAKAGE)", "Reason": "Month of contact causes temporal overfitting to macroeconomic campaign windows."},
-        {"Feature": "age, job, marital, education", "Status": "✅ APPROVED", "Reason": "Core verified client demographic attributes present prior to contact."},
-        {"Feature": "balance, default, housing, loan", "Status": "✅ APPROVED", "Reason": "Core banking financial and liability profile present prior to contact."},
-        {"Feature": "poutcome, pdays, previous", "Status": "✅ APPROVED", "Reason": "Historical previous campaign records available in CRM before calling."}
+        {"Excluded / Approved Feature": "duration", "Leakage Classification": "❌ EXCLUDED (LEAKAGE)", "Business & ML Exclusion Rationale": "Duration of call is only known after call concludes; impossible to know prior to dialing. Inclusion artificially inflates accuracy to 90%+ but is useless in real-world pre-contact targeting."},
+        {"Excluded / Approved Feature": "contact", "Leakage Classification": "❌ EXCLUDED (LEAKAGE)", "Business & ML Exclusion Rationale": "Communication channel selection occurs during/after campaign orchestration, not an intrinsic customer property."},
+        {"Excluded / Approved Feature": "day", "Leakage Classification": "❌ EXCLUDED (LEAKAGE)", "Business & ML Exclusion Rationale": "Specific calendar day of contact is an operational scheduling artifact, not a customer behavioral driver."},
+        {"Excluded / Approved Feature": "month", "Leakage Classification": "❌ EXCLUDED (LEAKAGE)", "Business & ML Exclusion Rationale": "Month of contact causes temporal overfitting to macroeconomic campaign calendar windows rather than genuine client propensity."},
+        {"Excluded / Approved Feature": "campaign", "Leakage Classification": "❌ EXCLUDED (LEAKAGE)", "Business & ML Exclusion Rationale": "Number of contacts during current campaign is an execution tally recorded during the campaign itself."},
+        {"Excluded / Approved Feature": "age, job, marital, education", "Leakage Classification": "✅ APPROVED (PRE-CONTACT)", "Business & ML Exclusion Rationale": "Core verified client demographic attributes present in bank CRM prior to campaign contact."},
+        {"Excluded / Approved Feature": "balance, default, housing, loan", "Leakage Classification": "✅ APPROVED (PRE-CONTACT)", "Business & ML Exclusion Rationale": "Core banking financial, liability, and debt profile present in core banking systems prior to contact."},
+        {"Excluded / Approved Feature": "poutcome, pdays, previous", "Leakage Classification": "✅ APPROVED (PRE-CONTACT)", "Business & ML Exclusion Rationale": "Historical prior campaign outcomes available in bank relationship management history before launching new campaign."}
     ])
     st.dataframe(leakage_table, use_container_width=True, hide_index=True)
 
