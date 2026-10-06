@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SmartBank AI — AI Campaign Intelligence & Decision Platform</title>
-  <meta name="description" content="Production-ready AI Campaign Intelligence Platform. Predict customer term-deposit propensity, optimize team calling capacity, and automate next best actions.">
+  <title>SmartBank AI — Enterprise AI Campaign Intelligence Platform</title>
+  <meta name="description" content="Enterprise AI Campaign Intelligence & Customer Decision Platform. Pre-contact term deposit propensity forecasting, staff allocation, capacity optimization, and decision support.">
   
   <!-- PWA & Mobile Configuration -->
   <link rel="manifest" href="manifest.json">
@@ -25,7 +25,7 @@
 <body class="app-body">
 
   <!-- ========================================================= -->
-  <!-- 1. LOGIN SCREEN (DEMO AUTHENTICATION)                     -->
+  <!-- 1. AUTHENTICATION (SIGN IN & EMPLOYEE REGISTRATION)       -->
   <!-- ========================================================= -->
   <div id="login-screen" class="login-container">
     <div class="login-card">
@@ -37,56 +37,97 @@
         </div>
         <div class="login-title-group">
           <h1 class="login-title">SMARTBANK<span class="brand-accent">.AI</span></h1>
-          <p class="login-subtitle">AI Campaign Intelligence & Customer Decision Platform</p>
+          <p class="login-subtitle">Enterprise Campaign Intelligence & Decision Engine</p>
         </div>
       </div>
 
-      <div class="demo-notice-banner">
-        <div class="demo-badge">DEMO ENVIRONMENT</div>
-        <p class="demo-text">For evaluation & demonstration purposes only. <strong>Do not enter real banking credentials.</strong></p>
+      <!-- Auth Mode Tabs -->
+      <div class="auth-tabs">
+        <button type="button" id="tab-btn-signin" class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+        <button type="button" id="tab-btn-register" class="auth-tab" onclick="switchAuthTab('register')">Register New Employee</button>
       </div>
 
-      <div class="demo-quick-roles">
-        <span class="quick-label">Select Demo Role to Autofill:</span>
-        <div class="role-button-group">
-          <button type="button" class="btn-role" onclick="autofillDemo('analyst')">
-            <span class="role-icon">📊</span>
-            <div class="role-texts">
-              <strong>Campaign Analyst</strong>
-              <small>analyst@smartbank.ai</small>
-            </div>
-          </button>
-          <button type="button" class="btn-role" onclick="autofillDemo('admin')">
-            <span class="role-icon">🛡️</span>
-            <div class="role-texts">
-              <strong>Administrator</strong>
-              <small>admin@smartbank.ai</small>
-            </div>
-          </button>
+      <!-- Sign In Form -->
+      <form id="signin-form" onsubmit="handleLogin(event)" class="auth-form-body">
+        <div class="demo-quick-roles">
+          <span class="quick-label">Quick Sign-In Accounts:</span>
+          <div class="role-button-group">
+            <button type="button" class="btn-role" onclick="autofillLogin('analyst')">
+              <span class="role-icon">📊</span>
+              <div class="role-texts">
+                <strong>Campaign Analyst</strong>
+                <small>analyst@smartbank.ai</small>
+              </div>
+            </button>
+            <button type="button" class="btn-role" onclick="autofillLogin('admin')">
+              <span class="role-icon">🛡️</span>
+              <div class="role-texts">
+                <strong>Administrator</strong>
+                <small>admin@smartbank.ai</small>
+              </div>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <form id="login-form" onsubmit="handleLogin(event)" class="login-form">
         <div class="form-group">
           <label for="login-email">Work Email</label>
           <input type="email" id="login-email" required placeholder="name@smartbank.ai" value="analyst@smartbank.ai">
         </div>
         <div class="form-group">
-          <label for="login-password">Demo Password</label>
-          <input type="password" id="login-password" required placeholder="Enter demo password" value="demo123">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Enter your password" value="analyst123">
         </div>
 
         <div id="login-error" class="login-error-box hidden"></div>
 
         <button type="submit" id="btn-login-submit" class="btn-primary btn-block">
-          <span class="btn-text">Sign In to Demo Workspace</span>
+          <span class="btn-text">Sign In to Platform</span>
           <div class="spinner hidden" id="login-spinner"></div>
         </button>
       </form>
 
+      <!-- Register Form -->
+      <form id="register-form" onsubmit="handleRegister(event)" class="auth-form-body hidden">
+        <div class="form-group">
+          <label for="reg-name">Employee Full Name *</label>
+          <input type="text" id="reg-name" required placeholder="e.g. Marcus Brody">
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">Work Email Address *</label>
+          <input type="email" id="reg-email" required placeholder="marcus.brody@smartbank.ai">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="reg-role">Staff Role *</label>
+            <select id="reg-role" required>
+              <option value="Campaign Analyst" selected>Campaign Analyst</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reg-dept">Department</label>
+            <input type="text" id="reg-dept" placeholder="Retail Banking" value="Campaign Intelligence">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password">Password *</label>
+          <input type="password" id="reg-password" required minlength="4" placeholder="Choose a password">
+        </div>
+
+        <div id="register-error" class="login-error-box hidden"></div>
+
+        <button type="submit" id="btn-register-submit" class="btn-primary btn-block">
+          <span class="btn-text">Create Real Account & Sign In</span>
+          <div class="spinner hidden" id="register-spinner"></div>
+        </button>
+      </form>
+
       <div class="login-footer">
-        <p>Gupio Campus Placement AI/ML Assignment — Option 2</p>
-        <p class="sub-credit">Pre-Contact Term Deposit Propensity & Capacity Optimizer</p>
+        <p>SmartBank AI — Pre-Contact Term Deposit Optimization Engine</p>
+        <p class="sub-credit">Powered by SQLite Persistence & Random Forest Classification</p>
       </div>
     </div>
   </div>
@@ -113,21 +154,31 @@
       </div>
 
       <nav class="sidebar-nav">
+        
+        <!-- ADMIN SPECIFIC SECTION (Visible to Administrator) -->
+        <div id="sidebar-admin-section" class="admin-only-block hidden">
+          <div class="nav-group-label text-cyan">ADMINISTRATION & STAFF</div>
+          <button type="button" class="nav-item admin-nav-item" data-view="view-admin" onclick="navigateTo('view-admin')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Staff & System Analytics</span>
+          </button>
+        </div>
+
         <div class="nav-group-label">CAMPAIGN WORKSPACE</div>
         
         <button type="button" class="nav-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>Overview</span>
+          <span>Overview Dashboard</span>
         </button>
 
         <button type="button" class="nav-item" data-view="view-customers" onclick="navigateTo('view-customers')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Customers</span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <span>Customer Directory</span>
         </button>
 
         <button type="button" class="nav-item highlight-nav" data-view="view-assessment" onclick="navigateTo('view-assessment')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-          <span>New Assessment</span>
+          <span>New AI Assessment</span>
         </button>
 
         <button type="button" class="nav-item" data-view="view-optimizer" onclick="navigateTo('view-optimizer')">
@@ -149,7 +200,7 @@
 
         <button type="button" class="nav-item" data-view="view-explainability" onclick="navigateTo('view-explainability')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>Explainability</span>
+          <span>Explainability Signals</span>
         </button>
 
         <button type="button" class="nav-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
@@ -164,7 +215,7 @@
 
         <button type="button" class="nav-item" data-view="view-settings" onclick="navigateTo('view-settings')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span>Settings</span>
+          <span>Account & System</span>
         </button>
       </nav>
 
@@ -219,7 +270,7 @@
         <div class="topbar-right">
           <div class="telemetry-badge">
             <span class="live-dot"></span>
-            <span class="telemetry-text">API & SQLite Online</span>
+            <span class="telemetry-text">API & Database Connected</span>
           </div>
           <button type="button" class="btn-primary btn-sm" onclick="navigateTo('view-assessment')">
             <span>+ New Assessment</span>
@@ -229,6 +280,128 @@
 
       <!-- DYNAMIC VIEWS CONTAINER -->
       <div class="views-wrapper">
+
+        <!-- ========================================================= -->
+        <!-- VIEW: ADMIN & STAFF ANALYTICS (ADMINISTRATOR ONLY)        -->
+        <!-- ========================================================= -->
+        <section id="view-admin" class="view-section">
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Administrator & Staff Team Analytics</h2>
+              <p class="section-subtext">Manage registered employees, monitor operator workloads, and inspect database storage.</p>
+            </div>
+            <button type="button" class="btn-primary btn-sm" onclick="openCreateEmployeeModal()">
+              <span>+ Provision New Employee Account</span>
+            </button>
+          </div>
+
+          <!-- Staff KPI Cards -->
+          <div class="kpi-grid mt-4">
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-blue-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Registered Staff Members</span>
+                <strong class="kpi-value text-cyan" id="admin-staff-count">--</strong>
+                <span class="kpi-subtext">Active team operators</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-emerald-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Total AI Assessments</span>
+                <strong class="kpi-value text-emerald" id="admin-assessments-count">--</strong>
+                <span class="kpi-subtext">Conducted by team</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-purple-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">SQLite Database Size</span>
+                <strong class="kpi-value text-purple" id="admin-db-size">-- KB</strong>
+                <span class="kpi-subtext">data/smartbank.db</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-amber-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">System Drift Index</span>
+                <strong class="kpi-value text-amber">0.024</strong>
+                <span class="kpi-subtext">PSI Stable (No Drift)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Staff Management Table -->
+          <div class="glass-card mt-4">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title">Registered Staff & Analysts</h3>
+                <p class="card-subtitle">Real employee accounts stored in SQLite database</p>
+              </div>
+              <button type="button" class="btn-ghost btn-sm" onclick="loadAdminData()">🔄 Refresh Staff List</button>
+            </div>
+
+            <div class="table-responsive mt-3">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Employee Name</th>
+                    <th>Email Address</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Last Active</th>
+                    <th>Assessments Run</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table-body">
+                  <tr><td colspan="8" class="text-center py-4 text-muted">Loading registered employees...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Database Storage & Telemetry Breakdown -->
+          <div class="grid-2col mt-4">
+            <div class="glass-card">
+              <h3 class="card-title">Database Table Breakdown</h3>
+              <p class="card-subtitle">Live row counts across SQLite persistence tables</p>
+              <div class="table-responsive mt-3">
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Table Name</th><th>Description</th><th>Row Count</th></tr>
+                  </thead>
+                  <tbody id="admin-tables-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <h3 class="card-title">Recent Staff Activity Log</h3>
+              <p class="card-subtitle">Latest customer assessments conducted by operators</p>
+              <div class="table-responsive mt-3">
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Time</th><th>Customer</th><th>Operator</th><th>Score</th></tr>
+                  </thead>
+                  <tbody id="admin-recent-assessments-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 1: DASHBOARD / OVERVIEW                              -->
@@ -250,9 +423,6 @@
                 <button type="button" class="btn-secondary" onclick="navigateTo('view-optimizer')">
                   <span>Launch Campaign Optimizer</span>
                 </button>
-                <button type="button" class="btn-ghost" onclick="openGupioTour()">
-                  <span>🎯 Gupio Interview Walkthrough</span>
-                </button>
               </div>
             </div>
             <div class="hero-graphic">
@@ -272,7 +442,7 @@
                     <strong class="mini-kpi-value text-amber">3.8x</strong>
                   </div>
                 </div>
-                <div class="radar-note">100% Leakage-Safe (5 post-contact features excluded)</div>
+                <div class="radar-note">100% Pre-Contact Leakage Guard Active</div>
               </div>
             </div>
           </div>
@@ -284,7 +454,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </div>
               <div class="kpi-data">
-                <span class="kpi-label">Customers Analyzed</span>
+                <span class="kpi-label">Customers in Directory</span>
                 <strong class="kpi-value" id="kpi-total-customers">30</strong>
                 <span class="kpi-subtext">Persisted in SQLite database</span>
               </div>
@@ -324,9 +494,8 @@
             </div>
           </div>
 
-          <!-- Quick Action & Recent Assessments Section -->
+          <!-- Recent Assessments Section -->
           <div class="grid-2col mt-6">
-            
             <div class="glass-card">
               <div class="card-header-flex">
                 <div>
@@ -383,7 +552,6 @@
                 <div class="status-chip"><span class="chip-dot-green"></span> Training Size: <strong>45,211 Records</strong></div>
               </div>
             </div>
-
           </div>
 
         </section>
@@ -392,7 +560,6 @@
         <!-- VIEW 2: CUSTOMER MANAGEMENT                               -->
         <!-- ========================================================= -->
         <section id="view-customers" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Customer Intelligence Directory</h2>
@@ -454,14 +621,12 @@
               </table>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 3: NEW ASSESSMENT & PREDICTION WORKFLOW              -->
         <!-- ========================================================= -->
         <section id="view-assessment" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Customer Deposit Propensity Assessment</h2>
@@ -471,21 +636,19 @@
 
           <!-- Archetype Presets for Fast Testing -->
           <div class="presets-bar glass-card mt-3">
-            <span class="presets-label">⚡ Quick Demo Archetypes:</span>
-            <button type="button" class="btn-preset" onclick="loadArchetype('high_senior')">👴 Senior High-Liquidity (Expected High)</button>
-            <button type="button" class="btn-preset" onclick="loadArchetype('repeat_success')">💼 Professional Previous Success (Expected High)</button>
-            <button type="button" class="btn-preset" onclick="loadArchetype('indebted_worker')">💳 Indebted Multiple Loans (Expected Low)</button>
-            <button type="button" class="btn-preset" onclick="loadArchetype('middle_tech')">🔧 Middle Technician (Expected Medium)</button>
+            <span class="presets-label">⚡ Archetype Presets:</span>
+            <button type="button" class="btn-preset" onclick="loadArchetype('high_senior')">👴 Senior High-Liquidity</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('repeat_success')">💼 Professional Previous Success</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('indebted_worker')">💳 Indebted Multiple Loans</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('middle_tech')">🔧 Middle Technician</button>
           </div>
 
           <div class="assessment-layout-grid mt-4">
-            
             <!-- Assessment Form -->
             <div class="assessment-form-card glass-card">
               <form id="assessment-form" onsubmit="handleRunAssessment(event)">
-                
                 <div class="form-section-title">
-                  <span>1. Customer Identity (Application Management Only)</span>
+                  <span>1. Customer Identity</span>
                   <small class="text-muted">Excluded from ML feature vector</small>
                 </div>
                 
@@ -614,14 +777,12 @@
                     <span class="btn-text">Run AI Propensity Assessment</span>
                   </button>
                 </div>
-
               </form>
             </div>
 
             <!-- Assessment Results Panel -->
             <div class="assessment-result-card glass-card" id="assessment-result-container">
-              
-              <!-- Processing State (Shown during calculation) -->
+              <!-- Processing State -->
               <div id="assessment-processing" class="processing-overlay hidden">
                 <div class="processing-steps">
                   <div class="step-item" id="p-step-1">1. VALIDATING CUSTOMER DATA</div>
@@ -642,7 +803,6 @@
 
               <!-- Live Assessment Output -->
               <div id="result-content" class="result-active-view hidden">
-                
                 <div class="result-header">
                   <div>
                     <span class="result-badge">AI PROPENSITY OUTCOME</span>
@@ -674,8 +834,8 @@
                       <strong id="res-label" class="text-emerald">Likely to Subscribe</strong>
                     </div>
                     <div class="meta-row">
-                      <span>Inference Time:</span>
-                      <span class="text-muted">Pre-Contact (12ms)</span>
+                      <span>Evaluating Operator:</span>
+                      <span id="res-analyst-name" class="text-muted">Alex Mercer</span>
                     </div>
                   </div>
                 </div>
@@ -695,9 +855,7 @@
                     <h4>Predictive Signals (Statistical Association)</h4>
                     <small class="text-muted">Feature directional influence</small>
                   </div>
-                  <div id="res-signals-list" class="signals-list">
-                    <!-- Dynamic signals inserted here -->
-                  </div>
+                  <div id="res-signals-list" class="signals-list"></div>
                   <p class="causality-disclaimer">
                     * Predictive signals indicate statistical association within the trained model and dataset. They do not establish causality.
                   </p>
@@ -711,20 +869,15 @@
                     <span>🚀 Open in Campaign Optimizer</span>
                   </button>
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 4: CAMPAIGN OPTIMIZER                                -->
         <!-- ========================================================= -->
         <section id="view-optimizer" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">AI Campaign Capacity Optimizer</h2>
@@ -847,14 +1000,12 @@
               </table>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 5: PREDICTION HISTORY & AUDIT                        -->
         <!-- ========================================================= -->
         <section id="view-history" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Assessment History & Decision Audit</h2>
@@ -873,11 +1024,11 @@
                     <th>Timestamp</th>
                     <th>Customer ID</th>
                     <th>Customer Name</th>
+                    <th>Operator</th>
                     <th>Probability</th>
                     <th>Opportunity Score</th>
                     <th>Priority</th>
                     <th>Prediction Label</th>
-                    <th>Assigned Next Best Action</th>
                   </tr>
                 </thead>
                 <tbody id="history-table-body">
@@ -886,14 +1037,12 @@
               </table>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 6: MODEL PERFORMANCE                                 -->
         <!-- ========================================================= -->
         <section id="view-performance" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Machine Learning Model Evaluation</h2>
@@ -902,7 +1051,6 @@
           </div>
 
           <div class="performance-grid mt-4">
-            
             <!-- Comparison Table Card -->
             <div class="glass-card">
               <h3 class="card-title">Validation Comparison (Stratified Split)</h3>
@@ -952,18 +1100,11 @@
                   </tbody>
                 </table>
               </div>
-
-              <div class="model-selection-justification mt-4">
-                <strong>Selection Rationale:</strong>
-                <p class="text-muted text-sm mt-1">
-                  Random Forest was selected as the final production pipeline because it achieved higher <strong>F1-score (0.3835)</strong> and <strong>ROC-AUC (0.7445)</strong> on minority positive subscribers while reducing False Positives from 2,086 down to 1,484.
-                </p>
-              </div>
             </div>
 
             <!-- Confusion Matrix Card -->
             <div class="glass-card">
-              <h3 class="card-title">Final Test Confusion Matrix (20% Isolated Partition)</h3>
+              <h3 class="card-title">Final Test Confusion Matrix (20% Partition)</h3>
               <p class="card-subtitle">9,043 unseen test cases</p>
 
               <div class="cm-visual-grid mt-3">
@@ -988,25 +1129,14 @@
                   <span class="cm-sub">Subscribers captured</span>
                 </div>
               </div>
-
-              <div class="business-impact-box mt-4">
-                <strong>Business Cost Analysis:</strong>
-                <ul class="cost-list mt-1">
-                  <li><strong>False Positive (FP):</strong> Cost of a 5-minute agent call (~€2–€5). Acceptable tradeoff to capture high-value deposit assets.</li>
-                  <li><strong>False Negative (FN):</strong> Cost of missed term deposit margin (€200–€500 lifetime value). Minimized by balanced class weighting.</li>
-                </ul>
-              </div>
             </div>
-
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 7: EXPLAINABILITY                                    -->
         <!-- ========================================================= -->
         <section id="view-explainability" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Explainable AI & Feature Importance</h2>
@@ -1019,7 +1149,6 @@
             <p class="card-subtitle">Features ranked by relative predictive weight across all ensemble decision trees</p>
 
             <div class="fi-bars-list mt-4" id="global-fi-bars-container">
-              <!-- Dynamically populated from feature_importance.json -->
               <div class="fi-bar-row">
                 <div class="fi-bar-meta">
                   <span>1. Customer Age (age)</span>
@@ -1064,18 +1193,16 @@
             <div class="scientific-notice-box mt-4">
               <span class="notice-icon">ℹ️</span>
               <p>
-                <strong>Scientific & Responsible AI Notice:</strong> These metrics quantify predictive association within the bank dataset. A high balance score reflects statistical correlation with deposit subscriptions, not direct physical causality.
+                <strong>Scientific Notice:</strong> These metrics quantify predictive association within the bank dataset. A high balance score reflects statistical correlation with deposit subscriptions, not direct physical causality.
               </p>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 8: CAMPAIGN LEARNING / FEEDBACK                      -->
         <!-- ========================================================= -->
         <section id="view-feedback" class="view-section">
-          
           <div class="section-header-flex">
             <div>
               <h2 class="section-heading">Campaign Feedback Intelligence (Closed-Loop Learning)</h2>
@@ -1124,17 +1251,15 @@
               </table>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 9: MODEL HEALTH & DRIFT                              -->
         <!-- ========================================================= -->
         <section id="view-health" class="view-section">
-          
           <div class="section-header-flex">
             <div>
-              <h2 class="section-heading">Model Telemetry & Drift Monitoring (Prototype)</h2>
+              <h2 class="section-heading">Model Telemetry & Drift Monitoring</h2>
               <p class="section-subtext">Real-time system health checks, feature validation status, and score distribution tracking.</p>
             </div>
           </div>
@@ -1168,75 +1293,112 @@
               </ul>
             </div>
           </div>
-
         </section>
 
         <!-- ========================================================= -->
         <!-- VIEW 10: SETTINGS & ROLES                                 -->
         <!-- ========================================================= -->
         <section id="view-settings" class="view-section">
-          
           <div class="section-header-flex">
             <div>
-              <h2 class="section-heading">Platform Settings & Demo Roles</h2>
-              <p class="section-subtext">Configure demo session, switch operator roles, or reset the local SQLite test database.</p>
+              <h2 class="section-heading">User Account & Platform Settings</h2>
+              <p class="section-subtext">View active session details, system metadata, and database controls.</p>
             </div>
           </div>
 
           <div class="grid-2col mt-4">
             <div class="glass-card">
-              <h3 class="card-title">Active Demo Operator</h3>
-              <p class="card-subtitle">Manage prototype session context</p>
-
-              <div class="form-group mt-3">
-                <label for="settings-role-select">Current Operator Role:</label>
-                <select id="settings-role-select" onchange="handleRoleSwitch()">
-                  <option value="Campaign Analyst">Campaign Analyst (Default Operator)</option>
-                  <option value="Administrator">Administrator (Full Access)</option>
-                </select>
-              </div>
+              <h3 class="card-title">Logged In Operator Profile</h3>
+              <p class="card-subtitle">Current authenticated session details</p>
 
               <div class="system-meta-box mt-3">
-                <p><strong>Database Path:</strong> <code>data/smartbank.db</code> (SQLite)</p>
-                <p><strong>API Endpoint:</strong> <code>http://127.0.0.1:8000/api</code></p>
-                <p><strong>ML Pipeline:</strong> <code>models/best_pipeline.joblib</code></p>
+                <p><strong>Name:</strong> <span id="settings-user-name">--</span></p>
+                <p><strong>Email:</strong> <span id="settings-user-email">--</span></p>
+                <p><strong>Role:</strong> <span id="settings-user-role" class="text-cyan">--</span></p>
+                <p><strong>Department:</strong> <span id="settings-user-dept">--</span></p>
+                <p><strong>Registered At:</strong> <span id="settings-user-created">--</span></p>
               </div>
+
+              <button type="button" class="btn-secondary mt-3" onclick="handleLogout()">
+                <span>Sign Out of Account</span>
+              </button>
             </div>
 
             <div class="glass-card">
-              <h3 class="card-title">Database Maintenance</h3>
-              <p class="card-subtitle">Reset or re-seed prototype evaluation data</p>
+              <h3 class="card-title">System Infrastructure</h3>
+              <p class="card-subtitle">Active backend database and machine learning engines</p>
               
-              <p class="text-muted text-sm mt-2">
-                Re-seeds SQLite database with clean UCI Bank Marketing records, 30 verified customer leads, 50 campaign feedback entries, and 5 optimizer simulation benchmarks.
-              </p>
+              <div class="system-meta-box mt-3">
+                <p><strong>Database Path:</strong> <code>data/smartbank.db</code> (SQLite 3)</p>
+                <p><strong>API Endpoint:</strong> <code>http://127.0.0.1:8000/api</code></p>
+                <p><strong>Model Engine:</strong> <code>models/best_pipeline.joblib</code></p>
+              </div>
 
               <button type="button" class="btn-secondary mt-4" onclick="seedDemoCustomers()">
-                <span>🔄 Re-seed / Reset Demo Database</span>
+                <span>🔄 Reset Demo Lead Pool</span>
               </button>
             </div>
           </div>
-
         </section>
 
       </div>
     </main>
-
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODALS & OVERLAYS                                         -->
+  <!-- MODALS                                                    -->
   <!-- ========================================================= -->
+
+  <!-- Provision Employee Modal (Admin Action) -->
+  <div id="modal-create-employee" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'modal-create-employee')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Provision New Staff / Employee Account</h3>
+        <button type="button" class="btn-close-modal" onclick="closeModal('modal-create-employee')">✕</button>
+      </div>
+      <form id="form-create-employee" onsubmit="handleAdminCreateEmployee(event)" class="modal-body">
+        <div class="form-group">
+          <label for="adm-emp-name">Employee Full Name *</label>
+          <input type="text" id="adm-emp-name" required placeholder="e.g. Jordan Lee">
+        </div>
+        <div class="form-group">
+          <label for="adm-emp-email">Work Email *</label>
+          <input type="email" id="adm-emp-email" required placeholder="jordan.lee@smartbank.ai">
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="adm-emp-role">Role *</label>
+            <select id="adm-emp-role" required>
+              <option value="Campaign Analyst" selected>Campaign Analyst</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="adm-emp-dept">Department</label>
+            <input type="text" id="adm-emp-dept" value="Campaign Intelligence">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="adm-emp-password">Temporary Password *</label>
+          <input type="password" id="adm-emp-password" required minlength="4" value="staff123">
+        </div>
+        <div class="modal-footer mt-4">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-create-employee')">Cancel</button>
+          <button type="submit" class="btn-primary">Create Staff Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Add Customer Modal -->
   <div id="modal-add-customer" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'modal-add-customer')">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title">Add New Customer Profile</h3>
+        <h3 class="modal-title">Add New Customer Lead</h3>
         <button type="button" class="btn-close-modal" onclick="closeModal('modal-add-customer')">✕</button>
       </div>
       <form id="form-add-customer" onsubmit="handleAddCustomerSubmit(event)" class="modal-body">
-        <div class="form-section-title">Identity (Application Management Only)</div>
+        <div class="form-section-title">Identity</div>
         <div class="form-row-2">
           <div class="form-group">
             <label for="new-cust-name">Full Name *</label>
@@ -1244,7 +1406,7 @@
           </div>
           <div class="form-group">
             <label for="new-cust-email">Email</label>
-            <input type="email" id="new-cust-email" placeholder="maya.chen@example.com">
+            <input type="email" id="new-cust-email" placeholder="maya.chen@smartbank-lead.org">
           </div>
         </div>
 
@@ -1305,7 +1467,7 @@
 
         <div class="modal-footer mt-4">
           <button type="button" class="btn-secondary" onclick="closeModal('modal-add-customer')">Cancel</button>
-          <button type="submit" class="btn-primary">Save Customer to Database</button>
+          <button type="submit" class="btn-primary">Save Customer</button>
         </div>
       </form>
     </div>
@@ -1320,13 +1482,13 @@
       </div>
       <div class="modal-body">
         <p class="text-muted text-sm">
-          Upload a CSV file containing pre-contact customer leads. The system will validate all required fields before importing into SQLite.
+          Upload a CSV file containing pre-contact customer leads. The system validates all required fields before importing into SQLite.
         </p>
 
         <div class="upload-dropzone mt-3" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p class="mt-2"><strong>Click or drag CSV file here</strong></p>
-          <span class="text-xs text-muted">Supports headers: age, job, marital, education, balance, housing, loan, poutcome</span>
+          <span class="text-xs text-muted">Headers: age, job, marital, education, balance, housing, loan, poutcome, pdays, previous</span>
           <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCSVFileSelect(event)">
         </div>
 
@@ -1361,15 +1523,13 @@
         <p>
           In bank telemarketing, calculating conversion propensity <strong>during or after</strong> a call provides zero operational value for campaign planning.
         </p>
-
         <h4 class="mt-3 text-cyan">Excluded Leakage Features (5 Total):</h4>
         <ul class="leakage-list mt-2">
-          <li><code>duration</code>: Call duration is only known after the phone call concludes. (High correlation with subscription = massive data leakage).</li>
+          <li><code>duration</code>: Call duration in seconds (unknown prior to call).</li>
           <li><code>contact</code>: Communication channel assigned for current outreach.</li>
           <li><code>day</code>, <code>month</code>: Timing/scheduling of current outreach.</li>
-          <li><code>campaign</code>: Number of contacts performed during the current campaign.</li>
+          <li><code>campaign</code>: In-campaign contact counter.</li>
         </ul>
-
         <h4 class="mt-3 text-emerald">Active Pre-Contact Features (11 Total):</h4>
         <p class="text-muted text-sm mt-1">
           Demographics (<code>age</code>, <code>job</code>, <code>marital</code>, <code>education</code>), Financial Health (<code>balance</code>, <code>default</code>, <code>housing</code>, <code>loan</code>), and Historical Prior Campaign Interactions (<code>poutcome</code>, <code>pdays</code>, <code>previous</code>).

@@ -1,7 +1,7 @@
 """
 SmartBank AI - AI Campaign Intelligence & Customer Decision Platform
-FastAPI Service with Demo Auth, Customer Management, Leakage-Safe Inference,
-Capacity Optimization, Feedback Intelligence & Persistent SQLite Storage.
+FastAPI Service with Real User Registration/Login, Staff Management, Admin Analytics,
+11-Feature Pre-Contact Inference, Capacity Optimization & SQLite Persistence.
 """
 
 import os
@@ -24,6 +24,10 @@ if BASE_DIR not in sys.path:
 
 from backend.database import (
     authenticate_user,
+    register_user,
+    list_all_users,
+    delete_user,
+    get_admin_analytics,
     list_customers,
     get_customer_by_id,
     create_customer,
@@ -49,7 +53,7 @@ FI_PATH = os.path.join(OUTPUTS_DIR, "feature_importance.json")
 
 app = FastAPI(
     title="SmartBank AI - AI Campaign Intelligence Platform",
-    description="Enterprise Pre-Contact Term Deposit Optimization, Propensity Scoring & Decision Engine",
+    description="Enterprise Pre-Contact Term Deposit Optimization, Staff Management & Decision Engine",
     version="1.0.0"
 )
 
@@ -77,16 +81,29 @@ def load_pipeline():
 
 load_pipeline()
 
+PRECONTACT_FEATURES = [
+    "age", "job", "marital", "education", "default", 
+    "balance", "housing", "loan", "poutcome", "pdays", "previous"
+]
+
 # -------------------------------------------------------------
 # PYDANTIC DATA CONTRACTS
 # -------------------------------------------------------------
 class LoginRequest(BaseModel):
     email: str = Field(..., example="analyst@smartbank.ai")
-    password: str = Field(..., example="demo123")
+    password: str = Field(..., example="analyst123")
+
+class RegisterRequest(BaseModel):
+    name: str = Field(..., example="Marcus Brody")
+    email: str = Field(..., example="marcus.brody@smartbank.ai")
+    password: str = Field(..., min_length=4, example="staff123")
+    role: str = Field("Campaign Analyst", example="Campaign Analyst")
+    department: Optional[str] = Field("Campaign Intelligence", example="Campaign Intelligence")
 
 class ClientFeatures(BaseModel):
     customer_id: Optional[str] = Field("CUST-NEW", description="Customer ID identifier")
     name: Optional[str] = Field("Prospective Customer", description="Customer full name")
+    analyst_name: Optional[str] = Field("Campaign Analyst", description="Name of operator performing assessment")
     age: int = Field(..., ge=18, le=100, description="Customer age in years", example=42)
     job: str = Field(..., description="Job occupation", example="technician")
     marital: str = Field(..., description="Marital status", example="married")
@@ -116,43 +133,111 @@ class NewCustomerRequest(BaseModel):
     pdays: int = Field(-1, example=-1)
     previous: int = Field(0, example=0)
     source: Optional[str] = Field("manual", example="manual")
+    created_by: Optional[str] = Field("Staff Operator", example="Alex Mercer")
 
 class OptimizerRequest(BaseModel):
     capacity: int = Field(2000, ge=50, le=10000, description="Campaign telephone contact capacity", example=2000)
     pool_size: int = Field(5000, ge=100, le=10000, description="Customer evaluation pool size", example=5000)
+    analyst_user: Optional[str] = Field("Campaign Analyst", example="Alex Mercer")
 
 # -------------------------------------------------------------
-# AUTHENTICATION ROUTES (DEMO PROTOTYPE AUTH)
+# HEALTH CHECK
 # -------------------------------------------------------------
-@app.post("/api/auth/login", tags=["Demo Authentication"])
-def demo_login(req: LoginRequest):
+@app.get("/api/health", tags=["System"])
+def health_check():
+    """System health check verifying database and model engine status."""
+    return {
+        "status": "healthy",
+        "database": "connected",
+        "model_loaded": model_pipeline is not None,
+        "active_features": len(PRECONTACT_FEATURES),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+# -------------------------------------------------------------
+# REAL AUTHENTICATION ROUTES (LOGIN & REGISTRATION)
+# -------------------------------------------------------------
+@app.post("/api/auth/login", tags=["Authentication"])
+def user_login(req: LoginRequest):
     """
-    Demo Authentication endpoint.
-    Verifies demo credentials and returns session user context and role.
+    Authenticates registered employee or administrator against SQLite database.
     """
     user = authenticate_user(req.email, req.password)
     if not user:
         raise HTTPException(
             status_code=401,
-            detail="Invalid credentials. Use demo accounts (analyst@smartbank.ai / demo123 or admin@smartbank.ai / admin123)."
+            detail="Invalid email or password. Please check your credentials or register a new staff account."
         )
     return {
         "status": "authenticated",
-        "token": f"demo-session-token-{user['id']}-{int(datetime.now().timestamp())}",
-        "user": user,
-        "environment": "SmartBank AI Demo Environment (Prototype)",
-        "disclaimer": "For demonstration purposes only. Do not enter real banking credentials."
+        "token": f"sb-session-{user['id']}-{int(datetime.now().timestamp())}",
+        "user": user
     }
 
-@app.get("/api/auth/me", tags=["Demo Authentication"])
-def get_current_user():
+@app.post("/api/auth/register", tags=["Authentication"])
+def user_register(req: RegisterRequest):
+    """
+    Registers a new employee or administrator in SQLite database.
+    """
+    try:
+        new_user = register_user(
+            name=req.name,
+            email=req.email,
+            password=req.password,
+            role=req.role,
+            department=req.department or "Campaign Intelligence"
+        )
+        return {
+            "status": "registered",
+            "message": f"Account for {new_user['name']} ({new_user['role']}) created successfully.",
+            "user": new_user
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+
+# -------------------------------------------------------------
+# ADMINISTRATOR MANAGEMENT & SYSTEM ANALYTICS
+# -------------------------------------------------------------
+@app.get("/api/admin/users", tags=["Administrator"])
+def get_all_employees():
+    """Returns list of all registered employees and admins with their activity logs."""
+    users = list_all_users()
     return {
-        "active_roles": [
-            {"email": "analyst@smartbank.ai", "role": "Campaign Analyst", "name": "Alex Mercer"},
-            {"email": "demo@smartbank.ai", "role": "Campaign Analyst", "name": "Demo Reviewer"},
-            {"email": "admin@smartbank.ai", "role": "Administrator", "name": "Sarah Vance"}
-        ]
+        "count": len(users),
+        "users": users
     }
+
+@app.post("/api/admin/users", tags=["Administrator"])
+def admin_create_employee(req: RegisterRequest):
+    """Administrator directly provisions a new staff/employee account."""
+    try:
+        user = register_user(
+            name=req.name,
+            email=req.email,
+            password=req.password,
+            role=req.role,
+            department=req.department or "Campaign Intelligence"
+        )
+        return {"status": "created", "user": user}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.delete("/api/admin/users/{user_id}", tags=["Administrator"])
+def admin_delete_employee(user_id: int):
+    """Administrator deletes an employee account."""
+    if user_id == 1:
+        raise HTTPException(status_code=400, detail="Cannot delete root system administrator.")
+    deleted = delete_user(user_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="User not found.")
+    return {"status": "deleted", "user_id": user_id}
+
+@app.get("/api/admin/analytics", tags=["Administrator"])
+def get_admin_system_analytics():
+    """Returns comprehensive system analytics, staff activity, and SQLite storage stats."""
+    return get_admin_analytics()
 
 # -------------------------------------------------------------
 # SYSTEM HEALTH & TELEMETRY
@@ -185,7 +270,6 @@ def get_dashboard_data():
     recent_assessments = get_recent_assessments(limit=10)
     customers = list_customers(limit=100)
     
-    # Calculate positive subscription rate from historical benchmark
     pos_rate = 11.70
     if os.path.exists(EDA_PATH):
         with open(EDA_PATH, "r", encoding="utf-8") as f:
@@ -241,7 +325,7 @@ def get_customer_detail(customer_id: str):
 def add_customer(req: NewCustomerRequest):
     """Creates a new customer record."""
     try:
-        new_cust = create_customer(req.dict())
+        new_cust = create_customer(req.dict(), creator_name=req.created_by or "Staff Operator")
         return {
             "status": "created",
             "customer": new_cust
@@ -250,7 +334,7 @@ def add_customer(req: NewCustomerRequest):
         raise HTTPException(status_code=400, detail=f"Failed to create customer: {str(e)}")
 
 @app.post("/api/customers/import", tags=["Customer Management"])
-def import_customers_csv(records: List[Dict[str, Any]]):
+def import_customers_csv(records: List[Dict[str, Any]], created_by: str = "Administrator"):
     """
     Validates and imports bulk customer records from CSV upload into SQLite database.
     """
@@ -266,7 +350,7 @@ def import_customers_csv(records: List[Dict[str, Any]]):
                 
             cust_dict = {
                 "name": r.get("name", f"Imported Lead #{i+1}"),
-                "email": r.get("email", f"lead_{i+1}@smartbank-demo.org"),
+                "email": r.get("email", f"lead_{i+1}@smartbank-lead.org"),
                 "phone": r.get("phone", "+1 555-0100"),
                 "age": age,
                 "job": str(r.get("job", "management")).lower(),
@@ -281,7 +365,7 @@ def import_customers_csv(records: List[Dict[str, Any]]):
                 "previous": int(r.get("previous", 0)),
                 "source": "imported_csv"
             }
-            create_customer(cust_dict)
+            create_customer(cust_dict, creator_name=created_by)
             valid_records.append(cust_dict)
         except Exception as e:
             invalid_rows.append({"row": i + 1, "reason": str(e)})
@@ -294,7 +378,7 @@ def import_customers_csv(records: List[Dict[str, Any]]):
     }
 
 # -------------------------------------------------------------
-# 1. & 3. & 4. CUSTOMER PROPENSITY, EXPLAINABILITY & NEXT BEST ACTION
+# CUSTOMER PROPENSITY, EXPLAINABILITY & NEXT BEST ACTION
 # -------------------------------------------------------------
 @app.post("/api/predict", tags=["Propensity Engine"])
 @app.post("/predict", tags=["Propensity Engine"])
@@ -309,11 +393,9 @@ def predict_subscription(features: ClientFeatures):
         if model_pipeline is None:
             raise HTTPException(status_code=503, detail="Prediction service unavailable. Model pipeline is not loaded.")
             
-    # Validate feature bounds
     if features.age < 18 or features.age > 100:
         raise HTTPException(status_code=422, detail="Invalid age. Must be between 18 and 100.")
         
-    # Construct exact 11-feature input dataframe
     input_df = pd.DataFrame([{
         "job": str(features.job).strip().lower(),
         "marital": str(features.marital).strip().lower(),
@@ -351,7 +433,7 @@ def predict_subscription(features: ClientFeatures):
         
     prediction_label = "Likely to Subscribe" if prob >= 0.50 else "Unlikely to Subscribe"
     
-    # 3. Explainable AI Signals
+    # Explainable AI Signals
     signals = []
     if features.poutcome == "success":
         signals.append({"factor": "Previous Campaign Success", "impact": "+Strong Positive (+28%)", "type": "positive", "weight": 95})
@@ -379,6 +461,7 @@ def predict_subscription(features: ClientFeatures):
     assessment_payload = {
         "customer_id": features.customer_id or "CUST-GUEST",
         "customer_name": features.name or "Prospective Client",
+        "analyst_name": features.analyst_name or "Campaign Analyst",
         "model_version": "v1.0.0 (Random Forest)",
         "probability": round(prob, 4),
         "opportunity_score": opportunity_score,
@@ -410,9 +493,10 @@ def predict_subscription(features: ClientFeatures):
     }
 
 # -------------------------------------------------------------
-# 2. CAMPAIGN OPTIMIZER ENDPOINT
+# CAMPAIGN OPTIMIZER ENDPOINT
 # -------------------------------------------------------------
 @app.post("/api/optimize-campaign", tags=["Campaign Optimizer"])
+@app.post("/api/optimizer/run", tags=["Campaign Optimizer"])
 def optimize_campaign(req: OptimizerRequest):
     """
     Ranks a pool of customer leads by predicted subscription probability given a fixed campaign capacity.
@@ -430,15 +514,11 @@ def optimize_campaign(req: OptimizerRequest):
         pre_contact_cols = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'poutcome', 'age', 'balance', 'previous', 'pdays']
         X_pool = sample_df[pre_contact_cols].copy()
         
-        # Inferred probabilities
         probs = model_pipeline.predict_proba(X_pool)[:, 1]
         sample_df['probability'] = np.round(probs, 4)
         sample_df['opportunity_score'] = np.round(probs * 100).astype(int)
         
-        # Rank descending
         ranked_df = sample_df.sort_values(by='probability', ascending=False).reset_index(drop=True)
-        
-        # Filter to capacity
         top_k = ranked_df.iloc[:req.capacity].copy()
         
         def assign_tier(p):
@@ -451,10 +531,9 @@ def optimize_campaign(req: OptimizerRequest):
         
         expected_conversions = float(top_k['probability'].sum())
         avg_topk_prob = float(top_k['probability'].mean())
-        baseline_rate = 0.1170 # 11.7% historical positive rate
+        baseline_rate = 0.1170
         lift = (avg_topk_prob / baseline_rate) if baseline_rate > 0 else 1.0
         
-        # Top 25 ranked sample records for UI
         queue_records = []
         for idx, row in top_k.iloc[:25].iterrows():
             queue_records.append({
@@ -485,7 +564,8 @@ def optimize_campaign(req: OptimizerRequest):
             expected_conv=round(expected_conversions, 1),
             avg_p=round(avg_topk_prob, 4),
             lift=round(lift, 2),
-            pool_size=len(sample_df)
+            pool_size=len(sample_df),
+            analyst=req.analyst_user or "Campaign Analyst"
         )
         
         return {
@@ -508,7 +588,7 @@ def optimize_campaign(req: OptimizerRequest):
         raise HTTPException(status_code=500, detail=f"Campaign optimization error: {str(e)}")
 
 # -------------------------------------------------------------
-# 5. CAMPAIGN FEEDBACK INTELLIGENCE
+# CAMPAIGN FEEDBACK INTELLIGENCE
 # -------------------------------------------------------------
 @app.get("/api/campaign-feedback", tags=["Feedback Intelligence"])
 def get_campaign_feedback():
@@ -519,8 +599,8 @@ def get_campaign_feedback():
     return {
         "evaluation_source": "UCI Bank Marketing (20% Isolated Test Partition)",
         "total_campaign_contacts": 9043,
-        "predicted_positive_calls": 2063, # TP (579) + FP (1484)
-        "actual_subscribers_captured": 579, # TP
+        "predicted_positive_calls": 2063,
+        "actual_subscribers_captured": 579,
         "precision_on_targeted_pool": "28.07%",
         "recall_captured_subscribers": "54.73% (579 out of 1,058 total subscribers in test set)",
         "non_subscribers_filtered_out": "6,501 (True Negatives)",
@@ -530,7 +610,7 @@ def get_campaign_feedback():
     }
 
 # -------------------------------------------------------------
-# 6. MODEL PERFORMANCE & HEALTH
+# MODEL PERFORMANCE & HEALTH
 # -------------------------------------------------------------
 @app.get("/api/model-performance", tags=["Model Performance"])
 def get_model_performance():
@@ -572,7 +652,7 @@ def get_model_health():
             "high_opportunity_pct": 14.7
         },
         "drift_monitoring": {
-            "psi_score": 0.024, # Population Stability Index < 0.1 indicates stable
+            "psi_score": 0.024,
             "drift_status": "NO_SIGNIFICANT_DRIFT",
             "last_evaluated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         }

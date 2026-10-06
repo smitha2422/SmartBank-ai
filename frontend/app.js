@@ -117,10 +117,24 @@ function showAppShell() {
   
   // Update User UI
   if (currentUser) {
-    document.getElementById("user-name-display").textContent = currentUser.name || "Demo Analyst";
+    document.getElementById("user-name-display").textContent = currentUser.name || "Alex Mercer";
     document.getElementById("user-role-display").textContent = currentUser.role || "Campaign Analyst";
-    const initials = (currentUser.name || "DA").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+    const initials = (currentUser.name || "AM").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
     document.getElementById("user-avatar-badge").textContent = initials;
+
+    // Role-based navigation visibility
+    const adminNavSection = document.getElementById("sidebar-admin-section");
+    if (adminNavSection) {
+      if (currentUser.role === "Administrator") {
+        adminNavSection.classList.remove("hidden");
+        loadAdminData();
+      } else {
+        adminNavSection.classList.add("hidden");
+        if (window.location.hash === "#view-admin") {
+          navigateTo("view-dashboard");
+        }
+      }
+    }
   }
   
   // Load initial view data
@@ -131,7 +145,31 @@ function showAppShell() {
   fetchCampaignFeedback();
 }
 
-function autofillDemo(role) {
+function switchAuthTab(tab) {
+  const tabSignIn = document.getElementById("tab-btn-signin");
+  const tabReg = document.getElementById("tab-btn-register");
+  const formSignIn = document.getElementById("signin-form");
+  const formReg = document.getElementById("register-form");
+  const loginErr = document.getElementById("login-error");
+  const regErr = document.getElementById("register-error");
+
+  if (loginErr) loginErr.classList.add("hidden");
+  if (regErr) regErr.classList.add("hidden");
+
+  if (tab === "signin") {
+    tabSignIn.classList.add("active");
+    tabReg.classList.remove("active");
+    formSignIn.classList.remove("hidden");
+    formReg.classList.add("hidden");
+  } else {
+    tabReg.classList.add("active");
+    tabSignIn.classList.remove("active");
+    formReg.classList.remove("hidden");
+    formSignIn.classList.add("hidden");
+  }
+}
+
+function autofillLogin(role) {
   const emailInput = document.getElementById("login-email");
   const passInput = document.getElementById("login-password");
   if (role === "admin") {
@@ -139,9 +177,13 @@ function autofillDemo(role) {
     passInput.value = "admin123";
   } else {
     emailInput.value = "analyst@smartbank.ai";
-    passInput.value = "demo123";
+    passInput.value = "analyst123";
   }
   document.getElementById("login-error").classList.add("hidden");
+}
+
+function autofillDemo(role) {
+  autofillLogin(role);
 }
 
 async function handleLogin(e) {
@@ -154,7 +196,7 @@ async function handleLogin(e) {
 
   errorBox.classList.add("hidden");
   spinner.classList.remove("hidden");
-  btnText.textContent = "Verifying Demo Credentials...";
+  btnText.textContent = "Verifying Credentials...";
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -165,27 +207,78 @@ async function handleLogin(e) {
 
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.detail || "Authentication failed.");
+      throw new Error(data.detail || "Authentication failed. Please check your email and password.");
     }
 
     currentUser = data.user;
     localStorage.setItem("smartbank_user", JSON.stringify(currentUser));
-    showToast(`Welcome back, ${currentUser.name}!`, "success");
+    showToast(`Welcome back, ${currentUser.name}! Signed in as ${currentUser.role}.`, "success");
     showAppShell();
-    navigateTo("view-dashboard");
+    
+    if (currentUser.role === "Administrator") {
+      navigateTo("view-admin");
+    } else {
+      navigateTo("view-dashboard");
+    }
   } catch (err) {
     errorBox.textContent = err.message;
     errorBox.classList.remove("hidden");
   } finally {
     spinner.classList.add("hidden");
-    btnText.textContent = "Sign In to Demo Workspace";
+    btnText.textContent = "Sign In to Platform";
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById("reg-name").value.trim();
+  const email = document.getElementById("reg-email").value.trim();
+  const role = document.getElementById("reg-role").value;
+  const department = document.getElementById("reg-dept").value.trim() || "Retail Banking";
+  const password = document.getElementById("reg-password").value.trim();
+  const errorBox = document.getElementById("register-error");
+  const spinner = document.getElementById("register-spinner");
+  const btnText = document.querySelector("#btn-register-submit .btn-text");
+
+  errorBox.classList.add("hidden");
+  spinner.classList.remove("hidden");
+  btnText.textContent = "Creating Real Account...";
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, role, department, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Registration failed.");
+    }
+
+    currentUser = data.user;
+    localStorage.setItem("smartbank_user", JSON.stringify(currentUser));
+    showToast(`Account created for ${currentUser.name}! Welcome to SmartBank AI.`, "success");
+    showAppShell();
+    
+    if (currentUser.role === "Administrator") {
+      navigateTo("view-admin");
+    } else {
+      navigateTo("view-dashboard");
+    }
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.classList.remove("hidden");
+  } finally {
+    spinner.classList.add("hidden");
+    btnText.textContent = "Create Real Account & Sign In";
   }
 }
 
 function handleLogout() {
   currentUser = null;
   localStorage.removeItem("smartbank_user");
-  showToast("Logged out of demo session.", "info");
+  showToast("Logged out of SmartBank AI session.", "info");
   showLoginScreen();
 }
 
@@ -201,9 +294,171 @@ function handleRoleSwitch() {
 }
 
 // -------------------------------------------------------------
+// 1.1 ADMINISTRATOR & STAFF MANAGEMENT CONTROLLER
+// -------------------------------------------------------------
+async function loadAdminData() {
+  try {
+    const [usersRes, analyticsRes] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/admin/users`),
+      fetch(`${API_BASE_URL}/api/admin/analytics`)
+    ]);
+
+    if (usersRes.ok) {
+      const usersData = await usersRes.json();
+      renderAdminUsersTable(usersData.users || []);
+    }
+
+    if (analyticsRes.ok) {
+      const anData = await analyticsRes.json();
+      renderAdminAnalytics(anData);
+    }
+  } catch (err) {
+    console.error("Admin data fetch error:", err);
+  }
+}
+
+function renderAdminUsersTable(users) {
+  const tbody = document.getElementById("admin-users-table-body");
+  const countEl = document.getElementById("admin-staff-count");
+  if (countEl) countEl.textContent = users.length;
+  if (!tbody) return;
+
+  if (!users || users.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No staff accounts found.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => {
+    const isSelf = currentUser && currentUser.email === u.email;
+    const roleBadgeClass = u.role === "Administrator" ? "badge-admin" : "badge-analyst";
+    const lastActive = u.last_login 
+      ? new Date(u.last_login).toLocaleDateString() 
+      : (u.created_at ? new Date(u.created_at).toLocaleDateString() : "Active");
+    
+    return `
+      <tr>
+        <td class="font-mono text-muted text-xs">#${u.id}</td>
+        <td>
+          <div class="user-cell-flex">
+            <div class="user-cell-avatar">${(u.name || "U").substring(0, 2).toUpperCase()}</div>
+            <div>
+              <strong>${u.name}</strong> ${isSelf ? '<span class="text-cyan text-xs font-semibold">(You)</span>' : ''}
+            </div>
+          </div>
+        </td>
+        <td class="font-mono text-xs text-muted">${u.email}</td>
+        <td><span class="role-badge ${roleBadgeClass}">${u.role}</span></td>
+        <td class="text-sm">${u.department || 'Retail Banking'}</td>
+        <td class="text-xs text-muted font-mono">${lastActive}</td>
+        <td><strong class="font-mono text-cyan">${u.assessments_count || 0}</strong></td>
+        <td>
+          ${isSelf ? '<span class="text-xs text-muted">Current User</span>' : `
+            <button type="button" class="btn-ghost-danger btn-xs" onclick="handleAdminDeleteEmployee(${u.id}, '${u.name.replace(/'/g, "\\'")}')">
+              Delete
+            </button>
+          `}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderAdminAnalytics(data) {
+  if (data.system) {
+    const assessEl = document.getElementById("admin-assessments-count");
+    if (assessEl) assessEl.textContent = data.system.total_assessments_logged || 0;
+    
+    const dbSizeEl = document.getElementById("admin-db-size");
+    if (dbSizeEl) {
+      const kb = Math.round((data.system.database_size_bytes || 0) / 1024);
+      dbSizeEl.textContent = `${kb} KB`;
+    }
+  }
+
+  const tablesTbody = document.getElementById("admin-tables-tbody");
+  if (data.tables && tablesTbody) {
+    tablesTbody.innerHTML = data.tables.map(t => `
+      <tr>
+        <td class="font-mono text-cyan">${t.table_name}</td>
+        <td class="text-xs text-muted">${t.description}</td>
+        <td><strong class="font-mono text-emerald">${t.row_count}</strong> rows</td>
+      </tr>
+    `).join("");
+  }
+
+  const logsTbody = document.getElementById("admin-recent-assessments-tbody");
+  if (data.recent_assessments && logsTbody) {
+    if (data.recent_assessments.length === 0) {
+      logsTbody.innerHTML = `<tr><td colspan="4" class="text-center py-3 text-muted text-xs">No assessments logged yet.</td></tr>`;
+    } else {
+      logsTbody.innerHTML = data.recent_assessments.slice(0, 6).map(a => `
+        <tr>
+          <td class="text-xs text-muted font-mono">${(a.timestamp || '').substring(11, 19) || 'Just now'}</td>
+          <td><strong>${a.customer_name || a.customer_id}</strong></td>
+          <td><span class="badge-analyst-sm">${a.analyst_name || 'Staff Analyst'}</span></td>
+          <td><span class="badge-priority badge-${(a.campaign_priority || 'LOW').toLowerCase()}">${a.opportunity_score} pts</span></td>
+        </tr>
+      `).join("");
+    }
+  }
+}
+
+function openCreateEmployeeModal() {
+  document.getElementById("modal-create-employee").classList.remove("hidden");
+}
+
+async function handleAdminCreateEmployee(e) {
+  e.preventDefault();
+  const name = document.getElementById("adm-emp-name").value.trim();
+  const email = document.getElementById("adm-emp-email").value.trim();
+  const role = document.getElementById("adm-emp-role").value;
+  const department = document.getElementById("adm-emp-dept").value.trim();
+  const password = document.getElementById("adm-emp-password").value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, role, department, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to create employee.");
+
+    showToast(`Staff account provisioned for ${data.user.name}!`, "success");
+    closeModal("modal-create-employee");
+    document.getElementById("form-create-employee").reset();
+    loadAdminData();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+async function handleAdminDeleteEmployee(userId, userName) {
+  if (!confirm(`Are you sure you want to delete employee ${userName} (ID #${userId})? This will permanently remove their platform account.`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Failed to delete employee.");
+
+    showToast(`Deleted employee account #${userId}`, "success");
+    loadAdminData();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+// -------------------------------------------------------------
 // 2. VIEW NAVIGATION & ROUTING
 // -------------------------------------------------------------
 const PAGE_TITLES = {
+  "view-admin": { title: "Staff & System Analytics", subtitle: "SmartBank AI / Admin Center" },
   "view-dashboard": { title: "Campaign Intelligence Dashboard", subtitle: "SmartBank AI / Overview" },
   "view-customers": { title: "Customer Intelligence Directory", subtitle: "SmartBank AI / Customers" },
   "view-assessment": { title: "Customer Deposit Propensity Assessment", subtitle: "SmartBank AI / New Assessment" },
@@ -491,6 +746,7 @@ async function handleRunAssessment(e) {
   const payload = {
     customer_id: document.getElementById("feat-cust-id").value.trim() || "CUST-GUEST",
     name: document.getElementById("feat-name").value.trim() || "Prospective Client",
+    analyst_name: currentUser ? currentUser.name : "Staff Analyst",
     age: parseInt(document.getElementById("feat-age").value),
     job: document.getElementById("feat-job").value,
     marital: document.getElementById("feat-marital").value,
