@@ -35,6 +35,22 @@ st.set_page_config(
 # Custom CSS for Dark Enterprise Aesthetics
 st.markdown("""
 <style>
+    /* Complete Removal of Streamlit Default Header, GitHub Source, Share, Star, and Edit Toolbars */
+    #MainMenu {visibility: hidden; height: 0 !important; display: none !important;}
+    header {visibility: hidden; height: 0 !important; display: none !important;}
+    footer {visibility: hidden; height: 0 !important; display: none !important;}
+    div[data-testid="stToolbar"] {visibility: hidden; height: 0 !important; display: none !important;}
+    div[data-testid="stDecoration"] {visibility: hidden; height: 0 !important; display: none !important;}
+    div[data-testid="stStatusWidget"] {visibility: hidden; height: 0 !important; display: none !important;}
+    .stDeployButton {display: none !important;}
+    div[data-testid="stAppDeployButton"] {display: none !important;}
+    button[title="View source"] {display: none !important;}
+    button[title="View GitHub"] {display: none !important;}
+    button[title="Star on GitHub"] {display: none !important;}
+    a[href*="github.com"] {display: none !important;}
+    div[data-testid="stHeader"] {display: none !important;}
+    div[data-testid="stSidebarHeader"] {padding-top: 1rem !important;}
+
     /* Dark Theme Core */
     .stApp {
         background-color: #070E1B;
