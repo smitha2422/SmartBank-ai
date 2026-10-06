@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SmartBank AI — Pre-Contact Term Deposit Campaign Intelligence</title>
-  <meta name="description" content="AI-driven pre-contact campaign intelligence and term deposit subscription prediction for retail banking.">
+  <meta name="description" content="AI-driven pre-contact campaign intelligence & term deposit subscription prediction for retail banking. Works as Web and Mobile App.">
+  
+  <!-- PWA & Mobile Optimization -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#090d16">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SmartBank AI">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -12,7 +24,7 @@
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Top Navigation Bar -->
   <header class="navbar">
     <div class="nav-container">
       <div class="brand">
@@ -26,30 +38,39 @@
           <span class="brand-tag">Campaign Intelligence Engine</span>
         </div>
       </div>
-      <div class="nav-status">
-        <span class="status-indicator live"></span>
-        <span id="api-status-text">Engine Online (Port 8000)</span>
+
+      <div class="nav-actions">
+        <button type="button" id="install-pwa-btn" class="install-btn" style="display: none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Install App</span>
+        </button>
+
+        <div class="nav-status">
+          <span class="status-indicator live"></span>
+          <span id="api-status-text">Engine Ready</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Hero & KPI Banner -->
+  <!-- Main Container -->
   <main class="main-container">
     
-    <section class="hero-section">
+    <!-- Hero & KPI Banner -->
+    <section class="hero-section" id="section-overview">
       <div class="hero-badge">
         <span class="pulse-dot"></span>
-        UCI Bank Marketing Benchmark • 100% Leakage-Safe
+        UCI Bank Marketing Benchmark • 100% Pre-Contact Leakage-Safe
       </div>
       <h1 class="hero-title">
         Pre-Contact Deposit Subscription Prediction & Intelligence
       </h1>
       <p class="hero-subtitle">
-        Empowering bank campaign managers to accurately identify high-opportunity term deposit subscribers 
-        <strong>prior to initiation of phone outreach</strong>, preventing post-contact feature leakage.
+        Empowering bank relationship managers to triage and prioritize high-value term deposit opportunities 
+        <strong>strictly prior to customer outreach</strong>, preventing post-contact feature leakage.
       </p>
 
-      <!-- Metric Cards Grid -->
+      <!-- KPI Grid -->
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-header">
@@ -57,12 +78,12 @@
             <span class="kpi-icon">📊</span>
           </div>
           <div class="kpi-value" id="kpi-rows">45,211</div>
-          <div class="kpi-subtext">UCI Bank Marketing Records</div>
+          <div class="kpi-subtext">UCI Bank Marketing Instances</div>
         </div>
 
         <div class="kpi-card highlight">
           <div class="kpi-header">
-            <span class="kpi-label">Final Production Model</span>
+            <span class="kpi-label">Production Model</span>
             <span class="kpi-icon">🏆</span>
           </div>
           <div class="kpi-value" id="kpi-model">Random Forest</div>
@@ -89,21 +110,21 @@
       </div>
     </section>
 
-    <!-- Interactive Simulator Section -->
-    <section class="simulator-section" id="simulator">
+    <!-- Simulator Section -->
+    <section class="simulator-section" id="section-simulator">
       <div class="section-heading">
-        <span class="section-tag">Interactive Simulation</span>
+        <span class="section-tag">Interactive Engine</span>
         <h2>Client Opportunity Simulator</h2>
-        <p>Test individual customer profiles before committing marketing call resources.</p>
+        <p>Evaluate individual customer profiles before initiating marketing calls.</p>
       </div>
 
-      <!-- Quick Preset Demo Buttons -->
+      <!-- Quick Preset Archetypes -->
       <div class="presets-container">
-        <span class="presets-label">Quick Test Archetypes:</span>
-        <button type="button" class="preset-btn" onclick="loadPreset('high_senior')">💎 Affluent Senior (High Prob)</button>
-        <button type="button" class="preset-btn" onclick="loadPreset('repeat_success')">🔁 Previous Convert (High Prob)</button>
-        <button type="button" class="preset-btn" onclick="loadPreset('indebted_worker')">💳 Indebted Worker (Low Prob)</button>
-        <button type="button" class="preset-btn" onclick="loadPreset('middle_tech')">💼 Standard Tech Pro (Medium)</button>
+        <span class="presets-label">⚡ Quick Test Profiles:</span>
+        <button type="button" class="preset-btn" onclick="loadPreset('high_senior')">💎 Affluent Senior (High)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('repeat_success')">🔁 Previous Convert (High)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('indebted_worker')">💳 Indebted Worker (Low)</button>
+        <button type="button" class="preset-btn" onclick="loadPreset('middle_tech')">💼 Mid Tech Pro (Medium)</button>
       </div>
 
       <div class="simulator-layout">
@@ -181,7 +202,7 @@
               </div>
 
               <div class="form-group">
-                <label for="default">Credit Default History</label>
+                <label for="default">Credit Default</label>
                 <select id="default" name="default">
                   <option value="no" selected>No (Clean Record)</option>
                   <option value="yes">Yes (Has Default)</option>
@@ -189,7 +210,7 @@
               </div>
 
               <div class="form-group">
-                <label for="poutcome">Previous Campaign Outcome</label>
+                <label for="poutcome">Previous Outcome</label>
                 <select id="poutcome" name="poutcome">
                   <option value="success" selected>Success (Subscribed Previously)</option>
                   <option value="failure">Failure</option>
@@ -199,7 +220,7 @@
               </div>
 
               <div class="form-group">
-                <label for="previous">Previous Campaign Contacts</label>
+                <label for="previous">Prior Contacts Count</label>
                 <input type="number" id="previous" name="previous" min="0" max="100" value="2" required>
               </div>
 
@@ -215,7 +236,7 @@
         <!-- Result Card -->
         <div class="simulator-card result-card" id="result-container">
           <div class="result-header">
-            <span class="card-title">Pre-Contact Campaign Assessment</span>
+            <span class="card-title">Campaign Triage Result</span>
             <span class="badge priority-badge" id="priority-badge">HIGH PRIORITY</span>
           </div>
 
@@ -226,33 +247,34 @@
                 <circle class="gauge-fill" id="gauge-fill-circle" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="75"></circle>
               </svg>
               <div class="gauge-inner">
-                <span class="score-number" id="opp-score">72</span>
+                <span class="score-number" id="opp-score">93</span>
                 <span class="score-scale">/ 100</span>
               </div>
             </div>
 
             <div class="score-context">
               <div class="pred-label" id="pred-label">Likely to Subscribe</div>
-              <div class="prob-detail">Raw ML Probability: <strong id="raw-prob">0.7240</strong></div>
+              <div class="prob-detail">Estimated Probability: <strong id="raw-prob">0.9293</strong></div>
               <p class="rec-text" id="rec-text">
                 High engagement opportunity: Assign to senior relationship manager with premium deposit terms.
               </p>
             </div>
           </div>
 
+          <!-- Why This Prediction Box -->
           <div class="signals-box">
-            <span class="signals-title">Active Predictive Signals:</span>
+            <span class="signals-title">Why This Prediction? (Active Signals)</span>
             <ul class="signals-list" id="signals-list">
-              <li class="signal-item positive">Previous Campaign Success (+Strong)</li>
-              <li class="signal-item positive">No Housing Loan Obligation (+Positive)</li>
-              <li class="signal-item positive">Healthy Account Balance (>€2,000) (+Positive)</li>
+              <li class="signal-item positive">Previous Campaign Success (Strong Positive)</li>
+              <li class="signal-item positive">No Housing Loan Obligation (Positive)</li>
+              <li class="signal-item positive">Healthy Account Balance (>€2,000) (Positive)</li>
             </ul>
           </div>
 
           <div class="disclaimer-footer">
             <span class="disclaimer-icon">ℹ️</span>
             <span id="disclaimer-text">
-              The Opportunity Score translates ML probability into a campaign prioritization signal. It represents statistical association and does not guarantee subscription.
+              Opportunity Score translates ML likelihood into a campaign triage priority. It represents statistical association and does not guarantee subscription.
             </span>
           </div>
         </div>
@@ -260,10 +282,60 @@
       </div>
     </section>
 
-    <!-- Why This System / 4 Core Pillars -->
-    <section class="pillars-section">
+    <!-- Real-Time What-If Sensitivity Simulator -->
+    <section class="whatif-section" id="section-whatif">
       <div class="section-heading">
-        <span class="section-tag">Design Principles</span>
+        <span class="section-tag">Interactive Sensitivity</span>
+        <h2>Live "What-If" Sensitivity Simulator</h2>
+        <p>Slide key customer levers in real time to observe dynamic model probability shifts.</p>
+      </div>
+
+      <div class="whatif-card">
+        <div class="whatif-controls">
+          
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="slider-age">Customer Age</label>
+              <span class="slider-value" id="val-slider-age">58 yrs</span>
+            </div>
+            <input type="range" id="slider-age" min="18" max="90" value="58" oninput="handleWhatIfChange()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="slider-balance">Yearly Balance</label>
+              <span class="slider-value" id="val-slider-balance">€3,250</span>
+            </div>
+            <input type="range" id="slider-balance" min="-500" max="15000" step="100" value="3250" oninput="handleWhatIfChange()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="slider-previous">Previous Contacts</label>
+              <span class="slider-value" id="val-slider-previous">2 contacts</span>
+            </div>
+            <input type="range" id="slider-previous" min="0" max="15" value="2" oninput="handleWhatIfChange()">
+          </div>
+
+        </div>
+
+        <div class="whatif-meter-box">
+          <div class="whatif-meter-header">
+            <span>Dynamic Opportunity Score:</span>
+            <span class="whatif-score" id="whatif-score-text">93 / 100</span>
+          </div>
+          <div class="whatif-bar-bg">
+            <div class="whatif-bar-fill" id="whatif-bar-fill" style="width: 93%;"></div>
+          </div>
+          <div class="whatif-priority-tag" id="whatif-priority-tag">HIGH CAMPAIGN PRIORITY</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why This System (4 Core Pillars) -->
+    <section class="pillars-section" id="section-principles">
+      <div class="section-heading">
+        <span class="section-tag">Governance & ML Principles</span>
         <h2>Why SmartBank AI?</h2>
         <p>Built strictly according to enterprise banking ML governance standards.</p>
       </div>
@@ -291,8 +363,8 @@
           <div class="pillar-number">03</div>
           <h3 class="pillar-title">Actionable Tiers</h3>
           <p class="pillar-desc">
-            Converts ML probabilities into 0-100 Opportunity Scores with actionable triage 
-            (HIGH / MEDIUM / LOW) to maximize bank agent conversion hours.
+            Converts ML probabilities into 0–100 Opportunity Scores with actionable triage 
+            (HIGH / MEDIUM / LOW) to maximize bank relationship manager conversion hours.
           </p>
         </div>
 
@@ -307,8 +379,8 @@
       </div>
     </section>
 
-    <!-- Model Comparison & Artifacts -->
-    <section class="insights-section">
+    <!-- Model Comparison & Benchmarks -->
+    <section class="insights-section" id="section-benchmark">
       <div class="section-heading">
         <span class="section-tag">Validation Benchmark</span>
         <h2>Model Selection & Performance Analysis</h2>
@@ -325,7 +397,7 @@
                 <tr>
                   <th>Metric</th>
                   <th>Logistic Regression</th>
-                  <th>Random Forest (Best)</th>
+                  <th>Random Forest (Winner)</th>
                 </tr>
               </thead>
               <tbody>
@@ -401,6 +473,26 @@
 
   </main>
 
+  <!-- Mobile Bottom App Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="#section-simulator" class="mobile-nav-item active">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Simulator</span>
+    </a>
+    <a href="#section-whatif" class="mobile-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+      <span>What-If</span>
+    </a>
+    <a href="#section-benchmark" class="mobile-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Benchmark</span>
+    </a>
+    <a href="#section-principles" class="mobile-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>Pillars</span>
+    </a>
+  </nav>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
@@ -408,7 +500,7 @@
         <strong>SmartBank AI</strong> — Pre-Contact Term Deposit Subscription & Campaign Intelligence
       </div>
       <div class="footer-right">
-        Dataset: UCI Bank Marketing (45,211 rows) • Gupio Submission Ready
+        Dataset: UCI Bank Marketing (45,211 rows) • PWA Enabled App & Web Platform
       </div>
     </div>
   </footer>

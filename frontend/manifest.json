@@ -1,0 +1,19 @@
+{
+  "name": "SmartBank AI - Campaign Intelligence",
+  "short_name": "SmartBank AI",
+  "description": "Pre-Contact Term Deposit Subscription Likelihood & Opportunity Scoring Engine",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity", "utilities"]
+}

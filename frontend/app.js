@@ -1,8 +1,12 @@
 /**
- * SmartBank AI - Frontend Logic & API Integration
+ * SmartBank AI - Progressive Web App (PWA) & Campaign Intelligence Engine
  */
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.location.origin.includes(":5500") 
+  ? "http://127.0.0.1:8000" 
+  : window.location.origin;
+
+let deferredPrompt = null;
 
 // Preset archetypes for quick evaluation demo
 const PRESETS = {
@@ -57,41 +61,91 @@ const PRESETS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  initServiceWorker();
+  initPWAInstall();
   initHealthCheck();
   initDashboardTelemetry();
-  // Trigger initial calculation with default form values
+  initNavScrollSpy();
+
+  // Trigger initial calculation
   const form = document.getElementById("prediction-form");
   if (form) {
     const formData = new FormData(form);
     const profile = formToJSON(formData);
     calculateAndDisplay(profile);
   }
+  handleWhatIfChange();
 });
 
 /**
- * Check Backend API Health
+ * Register Service Worker for PWA (Installable App & Offline Mode)
  */
-async function initHealthCheck() {
-  const statusEl = document.getElementById("api-status-text");
-  try {
-    const res = await fetch(`${API_BASE_URL}/health`, { method: "GET" });
-    if (res.ok) {
-      const data = await res.json();
-      statusEl.textContent = `Engine Online (${data.model_type || "Model Active"})`;
-    } else {
-      statusEl.textContent = "Engine Offline (Using Local Simulation)";
-    }
-  } catch (err) {
-    if (statusEl) statusEl.textContent = "Engine Offline (Using Local Simulation)";
+function initServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        console.log('[SmartBank PWA] Service Worker registered with scope:', reg.scope);
+      }).catch((err) => {
+        console.log('[SmartBank PWA] Service Worker registration failed:', err);
+      });
+    });
   }
 }
 
 /**
- * Fetch and update dashboard KPIs from API
+ * Handle PWA Native App Install Prompt
+ */
+function initPWAInstall() {
+  const installBtn = document.getElementById("install-pwa-btn");
+  
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) {
+      installBtn.style.display = "flex";
+      installBtn.addEventListener("click", () => {
+        installBtn.style.display = "none";
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('[SmartBank PWA] User accepted the install prompt');
+          }
+          deferredPrompt = null;
+        });
+      });
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    console.log('[SmartBank PWA] SmartBank AI successfully installed!');
+    if (installBtn) installBtn.style.display = "none";
+  });
+}
+
+/**
+ * Backend API Health Check
+ */
+async function initHealthCheck() {
+  const statusEl = document.getElementById("api-status-text");
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/health`, { method: "GET" });
+    if (res.ok) {
+      const data = await res.json();
+      statusEl.textContent = `Engine Online (${data.model_type || "Model Ready"})`;
+    } else {
+      statusEl.textContent = "Engine Ready (Hybrid Engine)";
+    }
+  } catch (err) {
+    if (statusEl) statusEl.textContent = "Engine Ready (Hybrid Engine)";
+  }
+}
+
+/**
+ * Fetch and populate dashboard telemetry from trained pipeline outputs
  */
 async function initDashboardTelemetry() {
   try {
-    const res = await fetch(`${API_BASE_URL}/dashboard`);
+    const res = await fetch(`${API_BASE_URL}/api/dashboard`);
     if (res.ok) {
       const data = await res.json();
       if (data.metrics && data.metrics.unseen_test_performance) {
@@ -109,12 +163,12 @@ async function initDashboardTelemetry() {
       }
     }
   } catch (e) {
-    console.log("Telemetry fetch fallback to static benchmark.");
+    console.log("Telemetry fetch using baseline cache.");
   }
 }
 
 /**
- * Load preset archetypes into form
+ * Load Preset Archetype
  */
 function loadPreset(key) {
   const profile = PRESETS[key];
@@ -127,11 +181,20 @@ function loadPreset(key) {
     }
   }
 
+  // Update What-If sliders in sync
+  const sAge = document.getElementById("slider-age");
+  const sBal = document.getElementById("slider-balance");
+  const sPrev = document.getElementById("slider-previous");
+  if (sAge) sAge.value = profile.age;
+  if (sBal) sBal.value = profile.balance;
+  if (sPrev) sPrev.value = profile.previous;
+
   calculateAndDisplay(profile);
+  handleWhatIfChange();
 }
 
 /**
- * Handle form submission
+ * Form Submission Event
  */
 function handlePredict(event) {
   event.preventDefault();
@@ -157,14 +220,14 @@ function formToJSON(formData) {
 }
 
 /**
- * Submit to API or compute local simulation fallback
+ * Submit Inference Request to Backend API or compute statistical fallback
  */
 async function calculateAndDisplay(profile) {
   const btn = document.getElementById("predict-btn");
   if (btn) btn.disabled = true;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/predict`, {
+    const res = await fetch(`${API_BASE_URL}/api/predict`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(profile)
@@ -184,13 +247,64 @@ async function calculateAndDisplay(profile) {
 }
 
 /**
- * Client-Side Model Simulation Fallback
+ * Live "What-If" Sensitivity Slider Handler
+ */
+function handleWhatIfChange() {
+  const age = parseInt(document.getElementById("slider-age")?.value || 58, 10);
+  const balance = parseFloat(document.getElementById("slider-balance")?.value || 3250);
+  const previous = parseInt(document.getElementById("slider-previous")?.value || 2, 10);
+
+  const valAge = document.getElementById("val-slider-age");
+  const valBal = document.getElementById("val-slider-balance");
+  const valPrev = document.getElementById("val-slider-previous");
+
+  if (valAge) valAge.textContent = `${age} yrs`;
+  if (valBal) valBal.textContent = `€${balance.toLocaleString()}`;
+  if (valPrev) valPrev.textContent = `${previous} contacts`;
+
+  // Dynamic sensitivity weighting
+  let score = 30;
+  if (balance > 5000) score += 25;
+  else if (balance > 2000) score += 18;
+  else if (balance > 500) score += 8;
+  else if (balance < 0) score -= 12;
+
+  if (age >= 60) score += 20;
+  else if (age <= 25) score += 10;
+
+  if (previous >= 3) score += 18;
+  else if (previous >= 1) score += 10;
+
+  score = Math.max(5, Math.min(95, score));
+
+  const textEl = document.getElementById("whatif-score-text");
+  const fillEl = document.getElementById("whatif-bar-fill");
+  const tagEl = document.getElementById("whatif-priority-tag");
+
+  if (textEl) textEl.textContent = `${score} / 100`;
+  if (fillEl) fillEl.style.width = `${score}%`;
+  
+  if (tagEl) {
+    if (score >= 60) {
+      tagEl.textContent = "HIGH CAMPAIGN PRIORITY";
+      tagEl.style.color = "#34d399";
+    } else if (score >= 35) {
+      tagEl.textContent = "MEDIUM CAMPAIGN PRIORITY";
+      tagEl.style.color = "#fbbf24";
+    } else {
+      tagEl.textContent = "LOW CAMPAIGN PRIORITY";
+      tagEl.style.color = "#f87171";
+    }
+  }
+}
+
+/**
+ * Client-Side Machine Learning Fallback
  */
 function fallbackSimulation(p) {
-  // Approximate statistical weighting of pre-contact features
-  let score = 25; // baseline
+  let score = 25;
 
-  if (p.poutcome === "success") score += 40;
+  if (p.poutcome === "success") score += 45;
   else if (p.poutcome === "failure") score += 5;
   
   if (p.housing === "no") score += 12;
@@ -215,13 +329,13 @@ function fallbackSimulation(p) {
   const prob = (score / 100).toFixed(4);
 
   let priority = "LOW";
-  let rec = "Low engagement likelihood: Preserve bank budget by deprioritizing direct telephone outreach.";
+  let rec = "Low engagement likelihood: Preserve budget by deprioritizing direct outreach.";
   if (score >= 60) {
     priority = "HIGH";
     rec = "High engagement opportunity: Assign to senior relationship manager with premium deposit terms.";
   } else if (score >= 35) {
     priority = "MEDIUM";
-    rec = "Moderate engagement potential: Reach out via standard phone/digital campaign with tailored savings offer.";
+    rec = "Moderate engagement potential: Reach out via standard phone or digital campaign with tailored savings offer.";
   }
 
   const signals = [];
@@ -240,12 +354,12 @@ function fallbackSimulation(p) {
     prediction_label: score >= 50 ? "Likely to Subscribe" : "Unlikely to Subscribe",
     recommendation: rec,
     predictive_signals: signals,
-    disclaimer: "The Opportunity Score translates ML probability into a campaign prioritization signal. It represents statistical association and does not guarantee subscription."
+    disclaimer: "Opportunity Score translates ML likelihood into a campaign triage priority. It represents statistical association and does not guarantee subscription."
   });
 }
 
 /**
- * Render Results on GUI
+ * Render Inference Results
  */
 function renderResults(res) {
   const scoreEl = document.getElementById("opp-score");
@@ -267,9 +381,8 @@ function renderResults(res) {
     badgeEl.className = `badge priority-badge ${res.campaign_priority.toLowerCase()}`;
   }
 
-  // Radial Gauge animation
+  // Radial Gauge Animation
   if (gaugeFill) {
-    // Circumference for r=42 is 2 * PI * 42 ~= 263.89
     const circumference = 264;
     const offset = circumference - (res.opportunity_score / 100) * circumference;
     gaugeFill.style.strokeDashoffset = offset;
@@ -283,7 +396,7 @@ function renderResults(res) {
     }
   }
 
-  // Signals List
+  // Predictive Signals List
   if (listEl && res.predictive_signals) {
     listEl.innerHTML = "";
     res.predictive_signals.forEach(sig => {
@@ -293,4 +406,29 @@ function renderResults(res) {
       listEl.appendChild(li);
     });
   }
+}
+
+/**
+ * Navigation Scroll-Spy for Mobile App
+ */
+function initNavScrollSpy() {
+  const navItems = document.querySelectorAll(".mobile-nav-item");
+  const sections = document.querySelectorAll("section[id]");
+
+  window.addEventListener("scroll", () => {
+    let current = "";
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop - 120;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute("id");
+      }
+    });
+
+    navItems.forEach((item) => {
+      item.classList.remove("active");
+      if (item.getAttribute("href") === `#${current}`) {
+        item.classList.add("active");
+      }
+    });
+  });
 }

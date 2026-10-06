@@ -1,6 +1,6 @@
 """
-SmartBank AI - Backend API Service
-FastAPI inference service for pre-contact term deposit subscription prediction.
+SmartBank AI - Backend API & Web Application Service
+FastAPI inference service & full-stack web/app server for pre-contact term deposit subscription intelligence.
 """
 
 import os
@@ -10,15 +10,25 @@ import pandas as pd
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+# Base Directory Paths
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "best_pipeline.joblib")
+OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")
+METRICS_PATH = os.path.join(OUTPUTS_DIR, "metrics.json")
+EDA_PATH = os.path.join(OUTPUTS_DIR, "eda_summary.json")
+FI_PATH = os.path.join(OUTPUTS_DIR, "feature_importance.json")
+
 app = FastAPI(
-    title="SmartBank AI - Campaign Intelligence API",
-    description="Pre-Contact Term Deposit Subscription Likelihood & Opportunity Scoring Service",
+    title="SmartBank AI - Campaign Intelligence API & App",
+    description="Pre-Contact Term Deposit Subscription Likelihood & Opportunity Scoring Engine",
     version="1.0.0"
 )
 
-# Enable CORS for frontend integration
+# Enable CORS for cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -27,15 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Paths to models & outputs
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "best_pipeline.joblib")
-OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")
-METRICS_PATH = os.path.join(OUTPUTS_DIR, "metrics.json")
-EDA_PATH = os.path.join(OUTPUTS_DIR, "eda_summary.json")
-FI_PATH = os.path.join(OUTPUTS_DIR, "feature_importance.json")
-
-# Global model holder
+# Global model container
 model_pipeline = None
 
 def load_pipeline():
@@ -43,12 +45,12 @@ def load_pipeline():
     if os.path.exists(MODEL_PATH):
         try:
             model_pipeline = joblib.load(MODEL_PATH)
-            print(f"[SmartBank API] Successfully loaded model pipeline from {MODEL_PATH}")
+            print(f"[SmartBank Engine] Successfully loaded model pipeline from {MODEL_PATH}")
         except Exception as e:
-            print(f"[SmartBank API] Error loading model: {e}")
+            print(f"[SmartBank Engine] Error loading model: {e}")
             model_pipeline = None
     else:
-        print(f"[SmartBank API] Model file not found at {MODEL_PATH}")
+        print(f"[SmartBank Engine] Model file not found at {MODEL_PATH}")
 
 load_pipeline()
 
@@ -77,18 +79,21 @@ class PredictionResponse(BaseModel):
     disclaimer: str
 
 # -------------------------------------------------------------
-# API ENDPOINTS
+# API ROUTES
 # -------------------------------------------------------------
+@app.get("/api/health", tags=["System"])
 @app.get("/health", tags=["System"])
 def health_check():
     """Health check endpoint to verify API and model status."""
     return {
         "status": "healthy",
+        "app_name": "SmartBank AI",
         "model_loaded": model_pipeline is not None,
         "model_type": "Random Forest Classifier (Ensemble)" if model_pipeline else "None",
         "leakage_safe": True
     }
 
+@app.get("/api/dashboard", tags=["Intelligence"])
 @app.get("/dashboard", tags=["Intelligence"])
 def get_dashboard_data():
     """Retrieves full model metrics, EDA summary, and feature importances for UI display."""
@@ -114,6 +119,7 @@ def get_dashboard_data():
         
     return data
 
+@app.post("/api/predict", response_model=PredictionResponse, tags=["Inference"])
 @app.post("/predict", response_model=PredictionResponse, tags=["Inference"])
 def predict_subscription(features: ClientFeatures):
     """
@@ -126,16 +132,16 @@ def predict_subscription(features: ClientFeatures):
             
     # Build DataFrame matching training features
     input_df = pd.DataFrame([{
-        "job": features.job.strip().lower(),
-        "marital": features.marital.strip().lower(),
-        "education": features.education.strip().lower(),
-        "default": features.default.strip().lower(),
-        "housing": features.housing.strip().lower(),
-        "loan": features.loan.strip().lower(),
-        "poutcome": features.poutcome.strip().lower(),
-        "age": features.age,
-        "balance": features.balance,
-        "previous": features.previous
+        "job": str(features.job).strip().lower(),
+        "marital": str(features.marital).strip().lower(),
+        "education": str(features.education).strip().lower(),
+        "default": str(features.default).strip().lower(),
+        "housing": str(features.housing).strip().lower(),
+        "loan": str(features.loan).strip().lower(),
+        "poutcome": str(features.poutcome).strip().lower(),
+        "age": int(features.age),
+        "balance": float(features.balance),
+        "previous": int(features.previous)
     }])
     
     try:
@@ -187,3 +193,9 @@ def predict_subscription(features: ClientFeatures):
         predictive_signals=signals,
         disclaimer="The Opportunity Score translates predictive likelihood into a campaign prioritization signal. It represents statistical association and does not guarantee subscription."
     )
+
+# -------------------------------------------------------------
+# MOUNT STATIC FRONTEND AS WEB & PWA APP
+# -------------------------------------------------------------
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
