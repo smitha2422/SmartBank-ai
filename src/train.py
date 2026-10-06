@@ -115,15 +115,15 @@ def prepare_features(df):
     # Exclude post-contact & in-campaign leakage variables:
     # - duration: call duration (unknown prior to call)
     # - contact: communication type of current contact
-    # - day, month: timing of the contact
+    # - day, month: timing/schedule of current contact
     # - campaign: number of contacts performed during current campaign
     
-    LEAKAGE_COLUMNS = ['contact', 'day', 'month', 'duration', 'campaign', 'pdays']
+    LEAKAGE_COLUMNS = ['contact', 'day', 'month', 'duration', 'campaign']
     dropped_cols = [c for c in LEAKAGE_COLUMNS if c in df.columns]
     print(f"      Excluded leakage features: {dropped_cols}")
     
     CATEGORICAL_FEATURES = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'poutcome']
-    NUMERICAL_FEATURES = ['age', 'balance', 'previous']
+    NUMERICAL_FEATURES = ['age', 'balance', 'previous', 'pdays']
     
     # Verify presence
     for col in CATEGORICAL_FEATURES + NUMERICAL_FEATURES:

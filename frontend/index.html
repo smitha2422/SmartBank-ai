@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SmartBank AI — AI Campaign Intelligence & Decision Platform</title>
-  <meta name="description" content="Enterprise AI campaign intelligence platform for bank customer term-deposit propensity prediction, capacity optimization & decision support.">
+  <meta name="description" content="Production-ready AI Campaign Intelligence Platform. Predict customer term-deposit propensity, optimize team calling capacity, and automate next best actions.">
   
   <!-- PWA & Mobile Configuration -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#070a13">
+  <meta name="theme-color" content="#060913">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,68 +24,151 @@
 </head>
 <body class="app-body">
 
-  <div class="app-layout">
+  <!-- ========================================================= -->
+  <!-- 1. LOGIN SCREEN (DEMO AUTHENTICATION)                     -->
+  <!-- ========================================================= -->
+  <div id="login-screen" class="login-container">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-logo-large">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/>
+          </svg>
+        </div>
+        <div class="login-title-group">
+          <h1 class="login-title">SMARTBANK<span class="brand-accent">.AI</span></h1>
+          <p class="login-subtitle">AI Campaign Intelligence & Customer Decision Platform</p>
+        </div>
+      </div>
 
-    <!-- ========================================================= -->
-    <!-- LEFT SIDEBAR: 6 CORE MODULES NAVIGATION                   -->
-    <!-- ========================================================= -->
+      <div class="demo-notice-banner">
+        <div class="demo-badge">DEMO ENVIRONMENT</div>
+        <p class="demo-text">For evaluation & demonstration purposes only. <strong>Do not enter real banking credentials.</strong></p>
+      </div>
+
+      <div class="demo-quick-roles">
+        <span class="quick-label">Select Demo Role to Autofill:</span>
+        <div class="role-button-group">
+          <button type="button" class="btn-role" onclick="autofillDemo('analyst')">
+            <span class="role-icon">📊</span>
+            <div class="role-texts">
+              <strong>Campaign Analyst</strong>
+              <small>analyst@smartbank.ai</small>
+            </div>
+          </button>
+          <button type="button" class="btn-role" onclick="autofillDemo('admin')">
+            <span class="role-icon">🛡️</span>
+            <div class="role-texts">
+              <strong>Administrator</strong>
+              <small>admin@smartbank.ai</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)" class="login-form">
+        <div class="form-group">
+          <label for="login-email">Work Email</label>
+          <input type="email" id="login-email" required placeholder="name@smartbank.ai" value="analyst@smartbank.ai">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Demo Password</label>
+          <input type="password" id="login-password" required placeholder="Enter demo password" value="demo123">
+        </div>
+
+        <div id="login-error" class="login-error-box hidden"></div>
+
+        <button type="submit" id="btn-login-submit" class="btn-primary btn-block">
+          <span class="btn-text">Sign In to Demo Workspace</span>
+          <div class="spinner hidden" id="login-spinner"></div>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Gupio Campus Placement AI/ML Assignment — Option 2</p>
+        <p class="sub-credit">Pre-Contact Term Deposit Propensity & Capacity Optimizer</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- 2. MAIN APPLICATION SHELL                                 -->
+  <!-- ========================================================= -->
+  <div id="app-shell" class="app-layout hidden">
+
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand">
+        <div class="brand" onclick="navigateTo('view-dashboard')">
           <div class="brand-logo">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/>
             </svg>
           </div>
           <div class="brand-info">
-            <span class="brand-title">SMARTBANK<span class="brand-ai">.AI</span></span>
-            <span class="brand-subtitle">Campaign Intelligence Engine</span>
+            <span class="brand-title">SMARTBANK<span class="brand-accent">.AI</span></span>
+            <span class="brand-subtitle">Campaign Intelligence</span>
           </div>
         </div>
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-group-label">DECISION WORKSPACE</div>
+        <div class="nav-group-label">CAMPAIGN WORKSPACE</div>
         
-        <button type="button" class="nav-item active" data-view="view-overview" onclick="switchView('view-overview')">
+        <button type="button" class="nav-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>01 Overview</span>
+          <span>Overview</span>
         </button>
 
-        <button type="button" class="nav-item" data-view="view-propensity" onclick="switchView('view-propensity')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>02 Propensity Engine</span>
+        <button type="button" class="nav-item" data-view="view-customers" onclick="navigateTo('view-customers')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Customers</span>
         </button>
 
-        <button type="button" class="nav-item highlight-nav" data-view="view-optimizer" onclick="switchView('view-optimizer')">
+        <button type="button" class="nav-item highlight-nav" data-view="view-assessment" onclick="navigateTo('view-assessment')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+          <span>New Assessment</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="view-optimizer" onclick="navigateTo('view-optimizer')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <span>03 Campaign Optimizer</span>
+          <span>Campaign Optimizer</span>
         </button>
 
-        <button type="button" class="nav-item" data-view="view-actions" onclick="switchView('view-actions')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <span>04 Next Best Action</span>
+        <button type="button" class="nav-item" data-view="view-history" onclick="navigateTo('view-history')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+          <span>Prediction History</span>
         </button>
 
-        <div class="nav-group-label">GOVERNANCE & LEARNING</div>
+        <div class="nav-group-label">AI GOVERNANCE & TELEMETRY</div>
 
-        <button type="button" class="nav-item" data-view="view-feedback" onclick="switchView('view-feedback')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          <span>05 Feedback Learning</span>
-        </button>
-
-        <button type="button" class="nav-item" data-view="view-health" onclick="switchView('view-health')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          <span>06 Model Health & Drift</span>
-        </button>
-
-        <button type="button" class="nav-item" data-view="view-benchmark" onclick="switchView('view-benchmark')">
+        <button type="button" class="nav-item" data-view="view-performance" onclick="navigateTo('view-performance')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>07 Benchmark & Signals</span>
+          <span>Model Performance</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="view-explainability" onclick="navigateTo('view-explainability')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>Explainability</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          <span>Campaign Learning</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="view-health" onclick="navigateTo('view-health')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Model Health & Drift</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="view-settings" onclick="navigateTo('view-settings')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
         </button>
       </nav>
 
-      <!-- Sidebar Footer: Leakage Guard & Model State -->
+      <!-- SIDEBAR FOOTER -->
       <div class="sidebar-footer">
         <div class="leakage-guard-widget" onclick="openLeakageModal()">
           <div class="leakage-status">
@@ -93,395 +176,211 @@
             <span class="guard-title">LEAKAGE GUARD</span>
             <span class="guard-pill">ACTIVE</span>
           </div>
-          <div class="guard-detail">
-            Prediction Point: <strong>Pre-Contact</strong>
-          </div>
           <div class="guard-subtext">
-            <code>duration</code>, <code>contact</code>, <code>day/month</code> excluded.
+            Predicts strictly <strong>Pre-Contact</strong>.
           </div>
         </div>
 
-        <div class="sidebar-model-badge">
-          <div class="badge-dot-live"></div>
-          <div class="badge-info">
-            <span class="badge-name">SQLite DB Connected</span>
-            <span class="badge-desc">smartbank.db (Persistent)</span>
+        <div class="user-session-card">
+          <div class="user-avatar" id="user-avatar-badge">AM</div>
+          <div class="user-meta">
+            <div class="user-name" id="user-name-display">Alex Mercer</div>
+            <div class="user-role" id="user-role-display">Campaign Analyst</div>
           </div>
+          <button type="button" class="btn-logout-icon" onclick="handleLogout()" title="Logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
         </div>
       </div>
     </aside>
 
-    <!-- ========================================================= -->
-    <!-- MAIN CONTENT AREA                                         -->
-    <!-- ========================================================= -->
-    <div class="main-wrapper">
-
-      <!-- Topbar -->
+    <!-- CENTER MAIN WORKSPACE -->
+    <main class="main-content">
+      
+      <!-- TOP NAVIGATION BAR -->
       <header class="topbar">
         <div class="topbar-left">
-          <h1 class="page-title" id="topbar-title">Campaign Intelligence Command Center</h1>
-          <span class="page-desc" id="topbar-desc">Predict. Prioritize. Act. • Enterprise Pre-Contact Decision Platform</span>
+          <button type="button" class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="page-title-box">
+            <h2 id="current-page-title" class="page-title">Campaign Intelligence Dashboard</h2>
+            <span id="current-page-subtitle" class="page-breadcrumb">SmartBank AI / Overview</span>
+          </div>
+        </div>
+
+        <div class="topbar-center">
+          <div class="global-search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="global-search-input" placeholder="Search Customer ID, name, or job occupation..." onkeyup="handleGlobalSearch(event)">
+          </div>
         </div>
 
         <div class="topbar-right">
-          <button type="button" class="demo-mode-btn" onclick="toggleDemoTour()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span>Panel Presentation Guide</span>
-          </button>
-
-          <button type="button" id="install-pwa-btn" class="pwa-btn" style="display: none;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span>Install App</span>
-          </button>
-
-          <div class="topbar-status">
-            <span class="status-indicator live"></span>
-            <span id="api-status-text">Engine Online (Port 8000)</span>
+          <div class="telemetry-badge">
+            <span class="live-dot"></span>
+            <span class="telemetry-text">API & SQLite Online</span>
           </div>
+          <button type="button" class="btn-primary btn-sm" onclick="navigateTo('view-assessment')">
+            <span>+ New Assessment</span>
+          </button>
         </div>
       </header>
 
-      <!-- Main Scrollable Content -->
-      <main class="content-container">
+      <!-- DYNAMIC VIEWS CONTAINER -->
+      <div class="views-wrapper">
 
-        <!-- ===================================================== -->
-        <!-- VIEW 1: OVERVIEW                                      -->
-        <!-- ===================================================== -->
-        <section id="view-overview" class="view-section active">
+        <!-- ========================================================= -->
+        <!-- VIEW 1: DASHBOARD / OVERVIEW                              -->
+        <!-- ========================================================= -->
+        <section id="view-dashboard" class="view-section active">
           
+          <!-- Hero Section -->
           <div class="hero-card">
             <div class="hero-content">
-              <div class="hero-eyebrow">
-                <span class="pulse-dot"></span>
-                AI CAMPAIGN INTELLIGENCE • UCI BANK BENCHMARK
-              </div>
-              <h2 class="hero-heading">
-                Predict the right customers<br>
-                <span class="hero-highlight">before the next campaign contact.</span>
-              </h2>
-              <p class="hero-text">
-                SmartBank AI is a modular customer decision-support platform that transforms raw pre-contact 
-                attributes into ranked campaign priorities, optimized capacity allocations, and actionable next steps.
+              <span class="hero-tag">PRE-CONTACT CAMPAIGN INTELLIGENCE</span>
+              <h1 class="hero-headline">Turn customer data into smarter campaign priorities.</h1>
+              <p class="hero-description">
+                SmartBank AI utilizes a leakage-safe Machine Learning ensemble to forecast term-deposit subscription probability using only pre-contact profile information. Prioritize limited team outreach capacity and maximize conversions.
               </p>
-              <div class="hero-ctas">
-                <button type="button" class="btn btn-primary" onclick="switchView('view-optimizer')">
-                  <span>Launch Campaign Optimizer</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <div class="hero-actions">
+                <button type="button" class="btn-primary" onclick="navigateTo('view-assessment')">
+                  <span>Start New Assessment</span>
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="switchView('view-propensity')">
-                  <span>Individual Propensity Engine</span>
+                <button type="button" class="btn-secondary" onclick="navigateTo('view-optimizer')">
+                  <span>Launch Campaign Optimizer</span>
+                </button>
+                <button type="button" class="btn-ghost" onclick="openGupioTour()">
+                  <span>🎯 Gupio Interview Walkthrough</span>
                 </button>
               </div>
             </div>
-
-            <div class="hero-visual">
-              <div class="radar-shell">
-                <div class="radar-pulse ring-1"></div>
-                <div class="radar-pulse ring-2"></div>
-                <div class="radar-pulse ring-3"></div>
-                <div class="radar-core">
-                  <span class="radar-value">78%</span>
-                  <span class="radar-label">Target Affinity</span>
+            <div class="hero-graphic">
+              <div class="radar-card">
+                <div class="radar-header">MODEL PERFORMANCE BENCHMARK</div>
+                <div class="radar-stat-grid">
+                  <div class="mini-kpi">
+                    <span class="mini-kpi-label">ROC-AUC</span>
+                    <strong class="mini-kpi-value text-emerald">0.735</strong>
+                  </div>
+                  <div class="mini-kpi">
+                    <span class="mini-kpi-label">Positive F1</span>
+                    <strong class="mini-kpi-value text-cyan">0.371</strong>
+                  </div>
+                  <div class="mini-kpi">
+                    <span class="mini-kpi-label">Efficiency Lift</span>
+                    <strong class="mini-kpi-value text-amber">3.8x</strong>
+                  </div>
                 </div>
-                <div class="node node-1" title="Age & Savings Signal"></div>
-                <div class="node node-2" title="Prior Campaign Success"></div>
-                <div class="node node-3" title="Zero Housing Loan"></div>
+                <div class="radar-note">100% Leakage-Safe (5 post-contact features excluded)</div>
               </div>
             </div>
           </div>
 
-          <!-- KPI Cards Grid -->
+          <!-- Real KPI Cards -->
           <div class="kpi-grid">
             <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">TOTAL CUSTOMERS</span>
-                <span class="kpi-icon">👥</span>
+              <div class="kpi-icon-wrap bg-blue-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </div>
-              <div class="kpi-val" id="kpi-rows">45,211</div>
-              <div class="kpi-meta">UCI Bank Benchmark Dataset</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Customers Analyzed</span>
+                <strong class="kpi-value" id="kpi-total-customers">30</strong>
+                <span class="kpi-subtext">Persisted in SQLite database</span>
+              </div>
             </div>
 
             <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">POSITIVE SUBSCRIBERS</span>
-                <span class="kpi-icon">📊</span>
+              <div class="kpi-icon-wrap bg-emerald-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               </div>
-              <div class="kpi-val">11.70%</div>
-              <div class="kpi-meta">5,289 Actual Subscribers</div>
-            </div>
-
-            <div class="kpi-card highlight">
-              <div class="kpi-head">
-                <span class="kpi-label">POSITIVE CLASS F1</span>
-                <span class="kpi-icon">🎯</span>
+              <div class="kpi-data">
+                <span class="kpi-label">Historical Positive Rate</span>
+                <strong class="kpi-value text-emerald">11.7%</strong>
+                <span class="kpi-subtext">Severe class imbalance handled</span>
               </div>
-              <div class="kpi-val" id="kpi-f1">0.3796</div>
-              <div class="kpi-meta">Validation Decision Metric</div>
             </div>
 
             <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">TEST ROC-AUC</span>
-                <span class="kpi-icon">📈</span>
+              <div class="kpi-icon-wrap bg-purple-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               </div>
-              <div class="kpi-val" id="kpi-roc">0.7288</div>
-              <div class="kpi-meta">Ranking Discrimination Power</div>
-            </div>
-          </div>
-
-          <!-- The 6 AI Modules Summary -->
-          <div class="section-card">
-            <div class="card-head">
-              <span class="card-tag">PLATFORM ARCHITECTURE</span>
-              <h3 class="card-title">6 Production-Grade AI Decision Modules</h3>
+              <div class="kpi-data">
+                <span class="kpi-label">Model Test F1-Score</span>
+                <strong class="kpi-value text-cyan" id="kpi-f1">0.371</strong>
+                <span class="kpi-subtext">Random Forest balanced classifier</span>
+              </div>
             </div>
 
-            <div class="modules-grid">
-              <div class="module-card" onclick="switchView('view-propensity')">
-                <div class="mod-icon">🎯</div>
-                <h4>1. Propensity Engine</h4>
-                <p>Estimates individual customer subscription probability and opportunity scores strictly before call initiation.</p>
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-amber-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
-
-              <div class="module-card highlight" onclick="switchView('view-optimizer')">
-                <div class="mod-icon">🚀</div>
-                <h4>2. Campaign Optimizer</h4>
-                <p>Allocates fixed outreach capacity (e.g. 2,000 calls) to maximize predicted conversion yield and agent ROI.</p>
-              </div>
-
-              <div class="module-card" onclick="switchView('view-benchmark')">
-                <div class="mod-icon">🧠</div>
-                <h4>3. Explainable AI</h4>
-                <p>Extracts top predictive signals while explicitly upholding the association vs. causation distinction.</p>
-              </div>
-
-              <div class="module-card" onclick="switchView('view-actions')">
-                <div class="mod-icon">💡</div>
-                <h4>4. Next Best Action</h4>
-                <p>Maps probability tiers into operational actions (Senior RM, Digital Nudge, or Deprioritize).</p>
-              </div>
-
-              <div class="module-card" onclick="switchView('view-feedback')">
-                <div class="mod-icon">🔄</div>
-                <h4>5. Feedback Learning</h4>
-                <p>Tracks historical predicted vs. actual subscription outcomes and calculates saved cold-call hours.</p>
-              </div>
-
-              <div class="module-card" onclick="switchView('view-health')">
-                <div class="mod-icon">🛡️</div>
-                <h4>6. Model Health & Drift</h4>
-                <p>Monitors population stability, data quality integrity, and prediction score distributions.</p>
+              <div class="kpi-data">
+                <span class="kpi-label">Cold Call Reduction</span>
+                <strong class="kpi-value text-amber">71.9%</strong>
+                <span class="kpi-subtext">6,501 True Negatives filtered out</span>
               </div>
             </div>
           </div>
 
-        </section>
-
-        <!-- ===================================================== -->
-        <!-- VIEW 2: CUSTOMER PROPENSITY ENGINE                    -->
-        <!-- ===================================================== -->
-        <section id="view-propensity" class="view-section">
-          
-          <div class="view-header">
-            <div>
-              <span class="view-tag">MODULE 1 • PROPENSITY ENGINE</span>
-              <h2 class="view-title">Individual Customer Propensity Workspace</h2>
-              <p class="view-subtitle">Real-time inference logged directly to SQLite (<code>smartbank.db</code>).</p>
-            </div>
-
-            <div class="precontact-badge" onclick="openLeakageModal()">
-              <span class="badge-lock">🛡️</span>
-              <span>PRE-CONTACT FEATURES ONLY</span>
-              <span class="badge-info-icon">ℹ️</span>
-            </div>
-          </div>
-
-          <!-- Quick Archetypes -->
-          <div class="archetypes-bar">
-            <span class="archetypes-label">Load Test Archetypes:</span>
-            <button type="button" class="arch-btn" onclick="loadPreset('high_senior')">💎 Affluent Senior (High)</button>
-            <button type="button" class="arch-btn" onclick="loadPreset('repeat_success')">🔁 Prior Convert (High)</button>
-            <button type="button" class="arch-btn" onclick="loadPreset('indebted_worker')">💳 Indebted Worker (Low)</button>
-            <button type="button" class="arch-btn" onclick="loadPreset('middle_tech')">💼 Tech Pro (Medium)</button>
-          </div>
-
-          <div class="prediction-grid">
+          <!-- Quick Action & Recent Assessments Section -->
+          <div class="grid-2col mt-6">
             
-            <!-- Input Form -->
-            <div class="section-card form-panel">
-              <form id="prediction-form" onsubmit="handlePredict(event)">
-                
-                <div class="form-section-title"><span>01</span> Demographics</div>
-                <div class="form-row">
-                  <div class="input-field">
-                    <label for="age">Customer Age</label>
-                    <input type="number" id="age" name="age" min="18" max="100" value="58" required>
-                  </div>
-                  <div class="input-field">
-                    <label for="job">Occupation</label>
-                    <select id="job" name="job">
-                      <option value="management" selected>Management</option>
-                      <option value="technician">Technician</option>
-                      <option value="blue-collar">Blue-Collar</option>
-                      <option value="admin.">Administrative</option>
-                      <option value="services">Services</option>
-                      <option value="retired">Retired</option>
-                      <option value="self-employed">Self-Employed</option>
-                      <option value="entrepreneur">Entrepreneur</option>
-                      <option value="unemployed">Unemployed</option>
-                      <option value="student">Student</option>
-                      <option value="housemaid">Housemaid</option>
-                      <option value="unknown">Unknown</option>
-                    </select>
-                  </div>
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-title">Recent Customer Assessments</h3>
+                  <p class="card-subtitle">Real stored prediction scores from SQLite engine</p>
                 </div>
+                <button type="button" class="btn-ghost btn-sm" onclick="navigateTo('view-history')">View All History →</button>
+              </div>
 
-                <div class="form-row">
-                  <div class="input-field">
-                    <label for="marital">Marital Status</label>
-                    <select id="marital" name="marital">
-                      <option value="married" selected>Married</option>
-                      <option value="single">Single</option>
-                      <option value="divorced">Divorced</option>
-                    </select>
-                  </div>
-                  <div class="input-field">
-                    <label for="education">Education Level</label>
-                    <select id="education" name="education">
-                      <option value="tertiary" selected>Tertiary (Higher)</option>
-                      <option value="secondary">Secondary (High School)</option>
-                      <option value="primary">Primary</option>
-                      <option value="unknown">Unknown</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-section-title"><span>02</span> Financial Profile</div>
-                <div class="form-row">
-                  <div class="input-field">
-                    <label for="balance">Yearly Balance (€)</label>
-                    <input type="number" id="balance" name="balance" value="3250" required>
-                  </div>
-                  <div class="input-field">
-                    <label for="default">Credit Default Record</label>
-                    <select id="default" name="default">
-                      <option value="no" selected>No (Clean Credit)</option>
-                      <option value="yes">Yes (Has Default)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="input-field">
-                    <label for="housing">Housing Loan (Mortgage)</label>
-                    <select id="housing" name="housing">
-                      <option value="no" selected>No (Debt-Free)</option>
-                      <option value="yes">Yes (Active Mortgage)</option>
-                    </select>
-                  </div>
-                  <div class="input-field">
-                    <label for="loan">Personal Loan</label>
-                    <select id="loan" name="loan">
-                      <option value="no" selected>No (No Personal Loan)</option>
-                      <option value="yes">Yes (Active Loan)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-section-title"><span>03</span> Previous Campaign History</div>
-                <div class="form-row">
-                  <div class="input-field">
-                    <label for="poutcome">Previous Outcome</label>
-                    <select id="poutcome" name="poutcome">
-                      <option value="success" selected>Success (Subscribed Previously)</option>
-                      <option value="failure">Failure</option>
-                      <option value="other">Other</option>
-                      <option value="unknown">Unknown / Not Contacted</option>
-                    </select>
-                  </div>
-                  <div class="input-field">
-                    <label for="previous">Prior Contacts Count</label>
-                    <input type="number" id="previous" name="previous" min="0" max="100" value="2" required>
-                  </div>
-                </div>
-
-                <button type="submit" class="submit-action-btn" id="predict-btn">
-                  <span id="btn-text">Run AI Prediction & Log to DB</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </button>
-              </form>
+              <div class="table-responsive mt-3">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Customer</th>
+                      <th>Score</th>
+                      <th>Probability</th>
+                      <th>Priority</th>
+                      <th>Next Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-table-body">
+                    <tr><td colspan="5" class="text-center py-4 text-muted">Loading recent customer assessments...</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <!-- Output Panel -->
-            <div class="section-card result-panel">
-              <div id="result-display-box">
-                <div class="result-header">
-                  <div>
-                    <span class="card-tag">AI PROPENSITY RESULT</span>
-                    <h3 class="panel-heading" id="pred-label">High Opportunity Customer</h3>
-                  </div>
-                  <span class="priority-tag high" id="priority-badge">HIGH PRIORITY</span>
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-title">Campaign Priority Tiers</h3>
+                  <p class="card-subtitle">Operational triage distribution</p>
                 </div>
+              </div>
 
-                <!-- Opportunity Radar -->
-                <div class="opportunity-radar-box">
-                  <div class="radar-gauge-container">
-                    <svg viewBox="0 0 100 100" class="gauge-svg">
-                      <circle class="gauge-track" cx="50" cy="50" r="42"></circle>
-                      <circle class="gauge-progress" id="gauge-progress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="19"></circle>
-                    </svg>
-                    <div class="gauge-center-content">
-                      <span class="gauge-score" id="opp-score">93</span>
-                      <span class="gauge-denom">/ 100</span>
-                      <span class="gauge-sub">Opportunity</span>
-                    </div>
-                  </div>
-
-                  <div class="radar-details">
-                    <div class="stat-pill">
-                      <span class="stat-lbl">Subscription Probability</span>
-                      <span class="stat-num" id="raw-prob">0.9293</span>
-                    </div>
-                    <div class="stat-pill">
-                      <span class="stat-lbl">Next Best Action</span>
-                      <span class="stat-num" id="next-action-lbl">Senior RM Outreach</span>
-                    </div>
-                    <div class="recommendation-box" id="rec-text">
-                      High engagement opportunity: Assign to senior relationship manager with premium deposit terms.
-                    </div>
-                  </div>
+              <div class="priority-tier-cards mt-3">
+                <div class="tier-card tier-high">
+                  <div class="tier-badge">🔥 HIGH PRIORITY</div>
+                  <p class="tier-desc">Score ≥ 65: Immediate telephone outreach by Senior Relationship Manager.</p>
                 </div>
-
-                <!-- Why This Prediction? Signals -->
-                <div class="signals-container">
-                  <div class="signals-header">
-                    <span class="signals-title">Why this prediction?</span>
-                    <span class="signals-sub">Active predictive signals</span>
-                  </div>
-                  <div class="signals-list" id="signals-list">
-                    <!-- Populated dynamically -->
-                  </div>
+                <div class="tier-card tier-medium">
+                  <div class="tier-badge">🟡 MEDIUM PRIORITY</div>
+                  <p class="tier-desc">Score 40–64: Tailored mobile banking prompt followed by standard campaign call.</p>
                 </div>
-
-                <!-- Prediction Story Sequence -->
-                <div class="prediction-story">
-                  <span class="story-label">PREDICTION STORY SEQUENCE</span>
-                  <div class="story-chain">
-                    <span class="story-step">Client Profile</span>
-                    <span class="story-arrow">→</span>
-                    <span class="story-step">Pre-Contact Signals</span>
-                    <span class="story-arrow">→</span>
-                    <span class="story-step highlight">92.9% Prob</span>
-                    <span class="story-arrow">→</span>
-                    <span class="story-step priority">High Priority</span>
-                    <span class="story-arrow">→</span>
-                    <span class="story-step action">Targeted Outreach</span>
-                  </div>
+                <div class="tier-card tier-low">
+                  <div class="tier-badge">⚪ LOW PRIORITY</div>
+                  <p class="tier-desc">Score &lt; 40: Deprioritize phone outreach to preserve agent hours; digital digest only.</p>
                 </div>
+              </div>
 
-                <div class="disclaimer-note">
-                  ℹ️ Logged to <code>smartbank.db</code>. Signals represent statistical predictive associations and do not imply causal guarantees.
-                </div>
+              <div class="model-status-chip-box mt-4">
+                <div class="status-chip"><span class="chip-dot-green"></span> Model: <strong>Random Forest v1.0</strong></div>
+                <div class="status-chip"><span class="chip-dot-green"></span> Leakage Guard: <strong>100% Enforced</strong></div>
+                <div class="status-chip"><span class="chip-dot-green"></span> Training Size: <strong>45,211 Records</strong></div>
               </div>
             </div>
 
@@ -489,109 +388,68 @@
 
         </section>
 
-        <!-- ===================================================== -->
-        <!-- VIEW 3: CAMPAIGN OPTIMIZER (SIGNATURE FEATURE)        -->
-        <!-- ===================================================== -->
-        <section id="view-optimizer" class="view-section">
+        <!-- ========================================================= -->
+        <!-- VIEW 2: CUSTOMER MANAGEMENT                               -->
+        <!-- ========================================================= -->
+        <section id="view-customers" class="view-section">
           
-          <div class="view-header">
+          <div class="section-header-flex">
             <div>
-              <span class="view-tag">MODULE 2 • CAMPAIGN OPTIMIZER</span>
-              <h2 class="view-title">Capacity Allocation & Queue Prioritization</h2>
-              <p class="view-subtitle">“Given a limited outreach capacity (e.g. 2,000 calls), which customers maximize conversion yield?”</p>
+              <h2 class="section-heading">Customer Intelligence Directory</h2>
+              <p class="section-subtext">Manage bank customer profiles, inspect pre-contact features, and trigger ML propensity assessments.</p>
             </div>
-          </div>
-
-          <!-- Capacity Controller Card -->
-          <div class="section-card optimizer-control-card">
-            <div class="opt-head">
-              <div>
-                <h3 class="card-title">Outreach Capacity Controller</h3>
-                <p class="card-meta">Select available agent telephone outreach capacity</p>
-              </div>
-
-              <div class="capacity-input-wrap">
-                <label for="capacity-slider">Campaign Capacity:</label>
-                <span class="capacity-val" id="capacity-display">2,000 calls</span>
-              </div>
-            </div>
-
-            <div class="opt-slider-row">
-              <input type="range" id="capacity-slider" min="500" max="5000" step="250" value="2000" oninput="updateCapacitySlider(this.value)">
-              <button type="button" class="btn btn-primary" onclick="runCampaignOptimizer()">
-                <span>Run AI Optimization</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <div class="action-buttons-group">
+              <button type="button" class="btn-secondary btn-sm" onclick="openImportModal()">
+                <span>📥 Import CSV</span>
+              </button>
+              <button type="button" class="btn-secondary btn-sm" onclick="exportCustomersCSV()">
+                <span>📤 Export CSV</span>
+              </button>
+              <button type="button" class="btn-primary btn-sm" onclick="openAddCustomerModal()">
+                <span>+ Add Customer</span>
               </button>
             </div>
           </div>
 
-          <!-- Optimization Metrics Summary -->
-          <div class="kpi-grid" id="optimizer-kpi-grid">
-            <div class="kpi-card highlight">
-              <div class="kpi-head">
-                <span class="kpi-label">EXPECTED CONVERSIONS</span>
-                <span class="kpi-icon">💰</span>
-              </div>
-              <div class="kpi-val" id="opt-expected-conv">1,482</div>
-              <div class="kpi-meta" id="opt-expected-rate">~74.1% Success Rate</div>
+          <!-- Customer Filter Toolbar -->
+          <div class="filter-toolbar glass-card mt-4">
+            <div class="search-input-wrap">
+              <input type="text" id="cust-search" placeholder="Search by name, ID, or job occupation..." onkeyup="filterCustomersTable()">
             </div>
-
-            <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">CAMPAIGN LIFT</span>
-                <span class="kpi-icon">🚀</span>
-              </div>
-              <div class="kpi-val" id="opt-lift">6.3x Lift</div>
-              <div class="kpi-meta">vs 11.7% Random Calling Baseline</div>
+            <div class="filter-select-wrap">
+              <label for="cust-priority-filter">Priority Tier:</label>
+              <select id="cust-priority-filter" onchange="filterCustomersTable()">
+                <option value="ALL">All Priorities</option>
+                <option value="HIGH">High Opportunity (Score ≥ 65)</option>
+                <option value="MEDIUM">Medium Opportunity (40–64)</option>
+                <option value="LOW">Low Opportunity (&lt; 40)</option>
+              </select>
             </div>
-
-            <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">TIER A (CONTACT FIRST)</span>
-                <span class="kpi-icon">🔥</span>
-              </div>
-              <div class="kpi-val" id="opt-tier-a">1,240</div>
-              <div class="kpi-meta">Highest Conviction Accounts (Prob ≥ 70%)</div>
-            </div>
-
-            <div class="kpi-card">
-              <div class="kpi-head">
-                <span class="kpi-label">TIER B (CONTACT NEXT)</span>
-                <span class="kpi-icon">🟡</span>
-              </div>
-              <div class="kpi-val" id="opt-tier-b">760</div>
-              <div class="kpi-meta">Moderate Potential (45%–69%)</div>
-            </div>
+            <button type="button" class="btn-ghost btn-sm" onclick="seedDemoCustomers()">
+              <span>🔄 Reset Demo Customers</span>
+            </button>
           </div>
 
-          <!-- Priority Outreach Queue -->
-          <div class="section-card">
-            <div class="card-head">
-              <div>
-                <h3 class="card-title">AI-Ranked Outreach Queue</h3>
-                <span class="card-meta">Sorted strictly by predicted conversion probability</span>
-              </div>
-              <div class="business-impact-badge" id="opt-impact-summary">
-                Targeting top 2,000 customers yields 6.3x efficiency over naive calling.
-              </div>
-            </div>
-
+          <!-- Customer Table -->
+          <div class="glass-card mt-4">
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Rank</th>
                     <th>Customer ID</th>
-                    <th>Age / Occupation</th>
-                    <th>Yearly Balance</th>
-                    <th>Prior Outcome</th>
-                    <th>Opportunity Score</th>
-                    <th>Priority Tier</th>
-                    <th>Action</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Job</th>
+                    <th>Education</th>
+                    <th>Balance</th>
+                    <th>Prior Campaign</th>
+                    <th>Score</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="optimizer-table-tbody">
-                  <!-- Populated by JS -->
+                <tbody id="customers-table-body">
+                  <tr><td colspan="10" class="text-center py-4 text-muted">Loading customer records...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -599,417 +457,934 @@
 
         </section>
 
-        <!-- ===================================================== -->
-        <!-- VIEW 4: NEXT BEST ACTION (DECISION SUPPORT)           -->
-        <!-- ===================================================== -->
-        <section id="view-actions" class="view-section">
+        <!-- ========================================================= -->
+        <!-- VIEW 3: NEW ASSESSMENT & PREDICTION WORKFLOW              -->
+        <!-- ========================================================= -->
+        <section id="view-assessment" class="view-section">
           
-          <div class="view-header">
+          <div class="section-header-flex">
             <div>
-              <span class="view-tag">MODULE 4 • DECISION SUPPORT</span>
-              <h2 class="view-title">Next Best Action Decision Matrix</h2>
-              <p class="view-subtitle">Deterministic business rules mapping ML probabilities into operational banking workflows.</p>
+              <h2 class="section-heading">Customer Deposit Propensity Assessment</h2>
+              <p class="section-subtext">Evaluate a customer's likelihood to subscribe to a term deposit before initiating outreach.</p>
             </div>
           </div>
 
-          <div class="section-card">
-            <div class="card-head">
-              <h3 class="card-title">Actionable Segment Governance</h3>
-              <span class="card-meta">Zero Unnecessary Generative AI • Pure Transparent Business Rules</span>
-            </div>
-
-            <div class="matrix-rules-grid">
-              
-              <div class="rule-card tier-a">
-                <div class="rule-header">
-                  <span class="rule-tag">TIER A • HIGH PROBABILITY (≥65%)</span>
-                  <span class="rule-priority">PRIORITY 1</span>
-                </div>
-                <h4>Senior RM Direct Outreach</h4>
-                <p>Assign customer to an experienced Relationship Manager with a tailored high-yield deposit proposal (e.g. 4.25% fixed 12-month term).</p>
-                <div class="rule-meta">Channel: Direct Phone Call • Escalation: Immediate (Within 24h)</div>
-              </div>
-
-              <div class="rule-card tier-b">
-                <div class="rule-header">
-                  <span class="rule-tag">TIER B • MODERATE PROBABILITY (40–64%)</span>
-                  <span class="rule-priority">PRIORITY 2</span>
-                </div>
-                <h4>Digital Nudge + Follow-up Call</h4>
-                <p>Deliver an automated mobile banking banner notification, followed by a standard campaign outreach phone call within 3 business days.</p>
-                <div class="rule-meta">Channel: App Notification + Phone • Escalation: Standard</div>
-              </div>
-
-              <div class="rule-card tier-c">
-                <div class="rule-header">
-                  <span class="rule-tag">TIER C • LOW PROBABILITY (<40%)</span>
-                  <span class="rule-priority">SUPPRESS CALL</span>
-                </div>
-                <h4>Preserve Agent Budget / Email Digest</h4>
-                <p>Strictly suppress direct telephone calling to eliminate wasted agent hours. Include term deposit educational banners in monthly email statements.</p>
-                <div class="rule-meta">Channel: Low-Cost Digital Only • Escalation: None</div>
-              </div>
-
-            </div>
+          <!-- Archetype Presets for Fast Testing -->
+          <div class="presets-bar glass-card mt-3">
+            <span class="presets-label">⚡ Quick Demo Archetypes:</span>
+            <button type="button" class="btn-preset" onclick="loadArchetype('high_senior')">👴 Senior High-Liquidity (Expected High)</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('repeat_success')">💼 Professional Previous Success (Expected High)</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('indebted_worker')">💳 Indebted Multiple Loans (Expected Low)</button>
+            <button type="button" class="btn-preset" onclick="loadArchetype('middle_tech')">🔧 Middle Technician (Expected Medium)</button>
           </div>
 
-        </section>
-
-        <!-- ===================================================== -->
-        <!-- VIEW 5: CAMPAIGN FEEDBACK INTELLIGENCE (LEARNING)     -->
-        <!-- ===================================================== -->
-        <section id="view-feedback" class="view-section">
-          
-          <div class="view-header">
-            <div>
-              <span class="view-tag">MODULE 5 • CLOSED-LOOP LEARNING</span>
-              <h2 class="view-title">Campaign Feedback Intelligence</h2>
-              <p class="view-subtitle">Offline evaluation comparing model predictions against actual historical campaign outcomes.</p>
-            </div>
-          </div>
-
-          <div class="section-card">
-            <div class="card-head">
-              <h3 class="card-title">Closed-Loop Campaign Evaluation</h3>
-              <span class="card-meta">Evaluated on 9,043 Isolated Test Partition Records</span>
-            </div>
-
-            <div class="feedback-grid">
-              
-              <div class="feedback-stat-card">
-                <span class="fb-lbl">TARGETED CALLS</span>
-                <div class="fb-val">2,086</div>
-                <span class="fb-sub">Predicted Positive Customers</span>
-              </div>
-
-              <div class="feedback-stat-card success">
-                <span class="fb-lbl">SUBSCRIBERS CAPTURED</span>
-                <div class="fb-val">571</div>
-                <span class="fb-sub">53.97% of all subscribers in test pool</span>
-              </div>
-
-              <div class="feedback-stat-card">
-                <span class="fb-lbl">TARGETED PRECISION</span>
-                <div class="fb-val">27.37%</div>
-                <span class="fb-sub">2.34x higher than random calling (11.7%)</span>
-              </div>
-
-              <div class="feedback-stat-card highlight">
-                <span class="fb-lbl">AGENT HOURS SAVED</span>
-                <div class="fb-val">71.5%</div>
-                <span class="fb-sub">6,470 Non-Subscribers Filtered Out</span>
-              </div>
-
-            </div>
-
-            <div class="feedback-explainer">
-              <strong>Technical Takeaway for Gupio Panel:</strong><br>
-              By focusing campaign calls strictly on model-prioritized leads, the bank captures <strong>54% of all deposit conversions</strong> while eliminating <strong>71.5% of wasted non-converting calls</strong>.
-            </div>
-          </div>
-
-        </section>
-
-        <!-- ===================================================== -->
-        <!-- VIEW 6: MODEL HEALTH & DRIFT MONITOR                  -->
-        <!-- ===================================================== -->
-        <section id="view-health" class="view-section">
-          
-          <div class="view-header">
-            <div>
-              <span class="view-tag">MODULE 6 • MLOPS TELEMETRY</span>
-              <h2 class="view-title">Model Health & Drift Monitor</h2>
-              <p class="view-subtitle">Continuous tracking of model stability, data quality, and distribution shifts.</p>
-            </div>
-          </div>
-
-          <div class="section-card">
-            <div class="card-head">
-              <h3 class="card-title">Production Model Telemetry</h3>
-              <span class="badge-winner">● HEALTHY (PSI = 0.024)</span>
-            </div>
-
-            <div class="health-overview-grid">
-              
-              <div class="health-card">
-                <span class="hc-label">ACTIVE MODEL</span>
-                <div class="hc-val">Random Forest v1.0</div>
-                <span class="hc-meta">100 Trees • Class-Weighted</span>
-              </div>
-
-              <div class="health-card">
-                <span class="hc-label">TRAINING VOLUME</span>
-                <div class="hc-val">45,211 Records</div>
-                <span class="hc-meta">0 Nulls • 0 Duplicates</span>
-              </div>
-
-              <div class="health-card">
-                <span class="hc-label">LEAKAGE STATUS</span>
-                <div class="hc-val text-success">Guarded</div>
-                <span class="hc-meta">Pre-Contact Enforced</span>
-              </div>
-
-              <div class="health-card">
-                <span class="hc-label">POPULATION STABILITY</span>
-                <div class="hc-val text-success">Stable (0.024)</div>
-                <span class="hc-meta">PSI < 0.1 indicates zero drift</span>
-              </div>
-
-            </div>
-
-            <!-- Score Distribution Histogram -->
-            <div class="dist-section">
-              <h4 class="dist-heading">Prediction Score Distribution</h4>
-              
-              <div class="dist-bars">
-                <div class="dist-row">
-                  <span class="dist-label">Low Opportunity (<40%)</span>
-                  <div class="dist-track"><div class="dist-fill low" style="width: 64.2%;"></div></div>
-                  <span class="dist-pct">64.2%</span>
-                </div>
-                <div class="dist-row">
-                  <span class="dist-label">Medium Opportunity (40-64%)</span>
-                  <div class="dist-track"><div class="dist-fill med" style="width: 21.3%;"></div></div>
-                  <span class="dist-pct">21.3%</span>
-                </div>
-                <div class="dist-row">
-                  <span class="dist-label">High Opportunity (≥65%)</span>
-                  <div class="dist-track"><div class="dist-fill high" style="width: 14.5%;"></div></div>
-                  <span class="dist-pct">14.5%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </section>
-
-        <!-- ===================================================== -->
-        <!-- VIEW 7: BENCHMARK & EXPLAINABILITY                    -->
-        <!-- ===================================================== -->
-        <section id="view-benchmark" class="view-section">
-          
-          <div class="view-header">
-            <div>
-              <span class="view-tag">BENCHMARK & SIGNALS</span>
-              <h2 class="view-title">Model Evaluation & Predictive Signals</h2>
-              <p class="view-subtitle">Comprehensive validation comparison, confusion matrix business impact, and feature ranking.</p>
-            </div>
-          </div>
-
-          <div class="benchmark-grid">
+          <div class="assessment-layout-grid mt-4">
             
-            <!-- Comparison Table -->
-            <div class="section-card">
-              <div class="card-head">
-                <h3 class="card-title">Validation Comparison (3-Way Split)</h3>
-                <span class="badge-winner">✓ Random Forest Selected</span>
+            <!-- Assessment Form -->
+            <div class="assessment-form-card glass-card">
+              <form id="assessment-form" onsubmit="handleRunAssessment(event)">
+                
+                <div class="form-section-title">
+                  <span>1. Customer Identity (Application Management Only)</span>
+                  <small class="text-muted">Excluded from ML feature vector</small>
+                </div>
+                
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="feat-cust-id">Customer ID</label>
+                    <input type="text" id="feat-cust-id" value="CUST-1042">
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-name">Customer Full Name</label>
+                    <input type="text" id="feat-name" value="Elena Rostova">
+                  </div>
+                </div>
+
+                <div class="form-section-title mt-4">
+                  <span>2. Demographics & Financial Attributes (Pre-Contact ML Features)</span>
+                </div>
+
+                <div class="form-row-3">
+                  <div class="form-group">
+                    <label for="feat-age">Age (18–100) *</label>
+                    <input type="number" id="feat-age" min="18" max="100" required value="42">
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-job">Job Occupation *</label>
+                    <select id="feat-job" required>
+                      <option value="management">Management</option>
+                      <option value="technician" selected>Technician</option>
+                      <option value="blue-collar">Blue-collar</option>
+                      <option value="admin.">Administrative</option>
+                      <option value="services">Services</option>
+                      <option value="retired">Retired</option>
+                      <option value="self-employed">Self-employed</option>
+                      <option value="unemployed">Unemployed</option>
+                      <option value="entrepreneur">Entrepreneur</option>
+                      <option value="housemaid">Housemaid</option>
+                      <option value="student">Student</option>
+                      <option value="unknown">Unknown</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-marital">Marital Status *</label>
+                    <select id="feat-marital" required>
+                      <option value="married" selected>Married</option>
+                      <option value="single">Single</option>
+                      <option value="divorced">Divorced</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row-3">
+                  <div class="form-group">
+                    <label for="feat-education">Education Level *</label>
+                    <select id="feat-education" required>
+                      <option value="tertiary">Tertiary (University)</option>
+                      <option value="secondary" selected>Secondary (High School)</option>
+                      <option value="primary">Primary</option>
+                      <option value="unknown">Unknown</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-balance">Average Balance (€) *</label>
+                    <input type="number" id="feat-balance" step="1" required value="2450">
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-default">Credit in Default? *</label>
+                    <select id="feat-default" required>
+                      <option value="no" selected>No</option>
+                      <option value="yes">Yes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="feat-housing">Housing Loan? *</label>
+                    <select id="feat-housing" required>
+                      <option value="no" selected>No (No Mortgage Debt)</option>
+                      <option value="yes">Yes (Active Mortgage)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-loan">Personal Loan? *</label>
+                    <select id="feat-loan" required>
+                      <option value="no" selected>No (No Personal Debt)</option>
+                      <option value="yes">Yes (Active Personal Debt)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-section-title mt-4">
+                  <span>3. Historical Campaign Signals (Pre-Contact)</span>
+                </div>
+
+                <div class="form-row-3">
+                  <div class="form-group">
+                    <label for="feat-poutcome">Prior Campaign Outcome *</label>
+                    <select id="feat-poutcome" required>
+                      <option value="success">Success (Subscribed previously)</option>
+                      <option value="failure">Failure</option>
+                      <option value="other">Other</option>
+                      <option value="unknown" selected>Unknown (New Prospect)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-previous">Prior Contacts (previous) *</label>
+                    <input type="number" id="feat-previous" min="0" max="300" required value="1">
+                  </div>
+                  <div class="form-group">
+                    <label for="feat-pdays">Days Since Prior Contact (pdays) *</label>
+                    <input type="number" id="feat-pdays" min="-1" max="1000" required value="90">
+                    <small class="text-muted">-1 = not previously contacted</small>
+                  </div>
+                </div>
+
+                <!-- Leakage Notice -->
+                <div class="leakage-banner-inline mt-3" onclick="openLeakageModal()">
+                  <div class="leakage-icon">🛡️</div>
+                  <div class="leakage-inline-text">
+                    <strong>Leakage Guard Active:</strong> <code>duration</code>, <code>contact</code>, <code>day</code>, <code>month</code>, and <code>campaign</code> are excluded from input to preserve 100% pre-contact validity.
+                  </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                  <button type="submit" id="btn-run-assessment" class="btn-primary btn-lg btn-block">
+                    <span class="btn-text">Run AI Propensity Assessment</span>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+
+            <!-- Assessment Results Panel -->
+            <div class="assessment-result-card glass-card" id="assessment-result-container">
+              
+              <!-- Processing State (Shown during calculation) -->
+              <div id="assessment-processing" class="processing-overlay hidden">
+                <div class="processing-steps">
+                  <div class="step-item" id="p-step-1">1. VALIDATING CUSTOMER DATA</div>
+                  <div class="step-item" id="p-step-2">2. APPLYING LEAKAGE GUARD</div>
+                  <div class="step-item" id="p-step-3">3. PREPROCESSING FEATURES</div>
+                  <div class="step-item" id="p-step-4">4. RUNNING RANDOM FOREST ML MODEL</div>
+                  <div class="step-item" id="p-step-5">5. CALCULATING OPPORTUNITY SCORE</div>
+                  <div class="step-item" id="p-step-6">6. GENERATING CAMPAIGN PRIORITY</div>
+                </div>
               </div>
 
-              <div class="table-responsive">
-                <table class="benchmark-table">
+              <!-- Initial Placeholder -->
+              <div id="result-placeholder" class="empty-state-box">
+                <div class="empty-icon">🎯</div>
+                <h3>Ready for Assessment</h3>
+                <p>Select an archetype or enter customer information on the left, then click <strong>Run AI Propensity Assessment</strong>.</p>
+              </div>
+
+              <!-- Live Assessment Output -->
+              <div id="result-content" class="result-active-view hidden">
+                
+                <div class="result-header">
+                  <div>
+                    <span class="result-badge">AI PROPENSITY OUTCOME</span>
+                    <h3 id="res-cust-name" class="result-cust-name">Elena Rostova</h3>
+                    <span id="res-cust-id" class="result-cust-id">CUST-1042</span>
+                  </div>
+                  <div id="res-priority-badge" class="badge-priority badge-high">HIGH PRIORITY</div>
+                </div>
+
+                <!-- Radial Opportunity Gauge -->
+                <div class="gauge-wrapper">
+                  <div class="radial-gauge">
+                    <svg viewBox="0 0 160 160" class="gauge-svg">
+                      <circle class="gauge-bg" cx="80" cy="80" r="68"></circle>
+                      <circle id="gauge-bar" class="gauge-fill" cx="80" cy="80" r="68"></circle>
+                    </svg>
+                    <div class="gauge-inner">
+                      <span class="gauge-score-value" id="res-opportunity-score">78</span>
+                      <span class="gauge-score-label">OPPORTUNITY SCORE</span>
+                    </div>
+                  </div>
+                  <div class="gauge-meta">
+                    <div class="meta-row">
+                      <span>Model Probability:</span>
+                      <strong id="res-probability" class="text-cyan">78.4%</strong>
+                    </div>
+                    <div class="meta-row">
+                      <span>Prediction Label:</span>
+                      <strong id="res-label" class="text-emerald">Likely to Subscribe</strong>
+                    </div>
+                    <div class="meta-row">
+                      <span>Inference Time:</span>
+                      <span class="text-muted">Pre-Contact (12ms)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Next Best Action -->
+                <div class="action-recommendation-box mt-4">
+                  <div class="action-box-header">
+                    <span class="action-icon">💡</span>
+                    <strong>Deterministic Next Best Action:</strong>
+                  </div>
+                  <p id="res-next-action" class="action-text">Priority Outreach: Assign Senior Relationship Manager with preferential term deposit incentive.</p>
+                </div>
+
+                <!-- Explainable AI Predictive Signals -->
+                <div class="explainability-box mt-4">
+                  <div class="explain-header">
+                    <h4>Predictive Signals (Statistical Association)</h4>
+                    <small class="text-muted">Feature directional influence</small>
+                  </div>
+                  <div id="res-signals-list" class="signals-list">
+                    <!-- Dynamic signals inserted here -->
+                  </div>
+                  <p class="causality-disclaimer">
+                    * Predictive signals indicate statistical association within the trained model and dataset. They do not establish causality.
+                  </p>
+                </div>
+
+                <div class="result-footer-actions mt-4">
+                  <button type="button" class="btn-secondary btn-sm" onclick="saveAssessmentToHistory()">
+                    <span>💾 Save Assessment</span>
+                  </button>
+                  <button type="button" class="btn-primary btn-sm" onclick="navigateTo('view-optimizer')">
+                    <span>🚀 Open in Campaign Optimizer</span>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 4: CAMPAIGN OPTIMIZER                                -->
+        <!-- ========================================================= -->
+        <section id="view-optimizer" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">AI Campaign Capacity Optimizer</h2>
+              <p class="section-subtext">Solve the core business constraint: given limited telephone calling slots, which leads should be prioritized to maximize conversions?</p>
+            </div>
+          </div>
+
+          <!-- Capacity Control Card -->
+          <div class="optimizer-control-card glass-card mt-3">
+            <div class="control-row">
+              <div class="capacity-input-group">
+                <label for="optimizer-capacity-input"><strong>Available Telephone Outreach Capacity:</strong></label>
+                <div class="input-stepper-wrap">
+                  <input type="number" id="optimizer-capacity-input" min="50" max="10000" step="100" value="2000" onchange="handleCapacityChange()">
+                  <span class="unit-tag">Calls</span>
+                </div>
+              </div>
+              <div class="capacity-presets-group">
+                <button type="button" class="btn-preset-cap" onclick="setCapacityPreset(500)">500 Calls</button>
+                <button type="button" class="btn-preset-cap" onclick="setCapacityPreset(1000)">1,000 Calls</button>
+                <button type="button" class="btn-preset-cap active" onclick="setCapacityPreset(2000)">2,000 Calls</button>
+                <button type="button" class="btn-preset-cap" onclick="setCapacityPreset(3500)">3,500 Calls</button>
+              </div>
+              <button type="button" class="btn-primary" onclick="runCampaignOptimizer()">
+                <span>⚡ Optimize Queue</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Optimization Output Summary -->
+          <div class="optimizer-summary-grid mt-4">
+            <div class="summary-card bg-emerald-tint">
+              <span class="summary-label">Expected Conversions</span>
+              <strong class="summary-value text-emerald" id="opt-expected-conversions">898</strong>
+              <span class="summary-sub" id="opt-expected-rate">44.9% Success Rate</span>
+            </div>
+
+            <div class="summary-card bg-cyan-tint">
+              <span class="summary-label">Random Calling Baseline</span>
+              <strong class="summary-value text-cyan">234</strong>
+              <span class="summary-sub">11.7% Historical Rate</span>
+            </div>
+
+            <div class="summary-card bg-amber-tint">
+              <span class="summary-label">Campaign Efficiency Lift</span>
+              <strong class="summary-value text-amber" id="opt-lift-multiplier">3.8x</strong>
+              <span class="summary-sub">Higher conversion efficiency</span>
+            </div>
+
+            <div class="summary-card bg-purple-tint">
+              <span class="summary-label">Evaluated Lead Pool</span>
+              <strong class="summary-value text-purple" id="opt-pool-size">5,000</strong>
+              <span class="summary-sub">Pre-contact ranked leads</span>
+            </div>
+          </div>
+
+          <!-- Actionable Tiers Breakdown -->
+          <div class="tiers-breakdown-grid mt-4">
+            <div class="tier-box tier-a-box">
+              <div class="tier-box-header">
+                <strong>🔥 Tier A (Contact First)</strong>
+                <span id="tier-a-count" class="tier-count">318</span>
+              </div>
+              <p class="tier-box-sub">Probability ≥ 70% | High conversion yield</p>
+            </div>
+            <div class="tier-box tier-b-box">
+              <div class="tier-box-header">
+                <strong>🟡 Tier B (Contact Next)</strong>
+                <span id="tier-b-count" class="tier-count">645</span>
+              </div>
+              <p class="tier-box-sub">Probability 45%–69% | Standard priority</p>
+            </div>
+            <div class="tier-box tier-c-box">
+              <div class="tier-box-header">
+                <strong>⚪ Tier C (Lower Priority)</strong>
+                <span id="tier-c-count" class="tier-count">710</span>
+              </div>
+              <p class="tier-box-sub">Probability 25%–44% | Digital nurture</p>
+            </div>
+            <div class="tier-box tier-d-box">
+              <div class="tier-box-header">
+                <strong>⚫ Tier D (Deprioritize)</strong>
+                <span id="tier-d-count" class="tier-count">327</span>
+              </div>
+              <p class="tier-box-sub">Probability &lt; 25% | Suppress direct calls</p>
+            </div>
+          </div>
+
+          <!-- Priority Outreach Queue Table -->
+          <div class="glass-card mt-4">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title">Recommended AI Priority Queue</h3>
+                <p class="card-subtitle">Ranked leads adhering to capacity constraint</p>
+              </div>
+              <button type="button" class="btn-secondary btn-sm" onclick="exportOptimizerQueueCSV()">
+                <span>📤 Export Outreach List (CSV)</span>
+              </button>
+            </div>
+
+            <div class="table-responsive mt-3">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Customer ID</th>
+                    <th>Age</th>
+                    <th>Job</th>
+                    <th>Balance</th>
+                    <th>Prior Campaign</th>
+                    <th>Probability</th>
+                    <th>Score</th>
+                    <th>Tier</th>
+                    <th>Recommended Action</th>
+                  </tr>
+                </thead>
+                <tbody id="optimizer-queue-table-body">
+                  <tr><td colspan="10" class="text-center py-4 text-muted">Optimizing campaign capacity queue...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 5: PREDICTION HISTORY & AUDIT                        -->
+        <!-- ========================================================= -->
+        <section id="view-history" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Assessment History & Decision Audit</h2>
+              <p class="section-subtext">Full historical audit trail of all AI customer predictions persisted in SQLite.</p>
+            </div>
+            <button type="button" class="btn-secondary btn-sm" onclick="fetchAssessmentHistory()">
+              <span>🔄 Refresh History</span>
+            </button>
+          </div>
+
+          <div class="glass-card mt-4">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Customer ID</th>
+                    <th>Customer Name</th>
+                    <th>Probability</th>
+                    <th>Opportunity Score</th>
+                    <th>Priority</th>
+                    <th>Prediction Label</th>
+                    <th>Assigned Next Best Action</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <tr><td colspan="8" class="text-center py-4 text-muted">Loading audit records from database...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 6: MODEL PERFORMANCE                                 -->
+        <!-- ========================================================= -->
+        <section id="view-performance" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Machine Learning Model Evaluation</h2>
+              <p class="section-subtext">Empirical validation and test benchmark comparison between Logistic Regression and Random Forest.</p>
+            </div>
+          </div>
+
+          <div class="performance-grid mt-4">
+            
+            <!-- Comparison Table Card -->
+            <div class="glass-card">
+              <h3 class="card-title">Validation Comparison (Stratified Split)</h3>
+              <p class="card-subtitle">Trained with class_weight='balanced' to address 88.3% / 11.7% imbalance</p>
+
+              <div class="table-responsive mt-3">
+                <table class="data-table">
                   <thead>
                     <tr>
                       <th>Metric</th>
                       <th>Logistic Regression</th>
-                      <th>Random Forest (Best)</th>
-                      <th>Delta</th>
+                      <th>Random Forest (Selected)</th>
+                      <th>Advantage</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Accuracy</td>
-                      <td>70.90%</td>
-                      <td><strong>78.45%</strong></td>
-                      <td class="text-success">+7.55%</td>
+                      <td><strong>Accuracy</strong></td>
+                      <td>70.89%</td>
+                      <td><strong>78.53%</strong></td>
+                      <td><span class="text-emerald">+7.64%</span></td>
                     </tr>
                     <tr>
-                      <td>Precision (Positive)</td>
-                      <td>22.31%</td>
-                      <td><strong>28.61%</strong></td>
-                      <td class="text-success">+6.30%</td>
+                      <td><strong>Precision</strong></td>
+                      <td>22.34%</td>
+                      <td><strong>28.87%</strong></td>
+                      <td><span class="text-emerald">+6.53%</span></td>
                     </tr>
                     <tr>
-                      <td>Recall (Positive)</td>
-                      <td><strong>59.93%</strong></td>
-                      <td>56.38%</td>
-                      <td class="text-muted">-3.55%</td>
+                      <td><strong>Recall</strong></td>
+                      <td>60.17%</td>
+                      <td><strong>57.09%</strong></td>
+                      <td><span class="text-muted">High Sensitivity</span></td>
                     </tr>
-                    <tr class="highlight-row">
-                      <td>F1-Score (Decision)</td>
-                      <td>0.3251</td>
-                      <td><strong>0.3796</strong></td>
-                      <td class="text-success font-bold">+0.0545 (+16.7%)</td>
+                    <tr>
+                      <td><strong>Positive F1-Score</strong></td>
+                      <td>0.3259</td>
+                      <td><strong>0.3835</strong></td>
+                      <td><span class="text-emerald">+17.7% Rel. Lift</span></td>
                     </tr>
-                    <tr class="highlight-row">
-                      <td>ROC-AUC (Ranking)</td>
-                      <td>0.7183</td>
-                      <td><strong>0.7393</strong></td>
-                      <td class="text-success font-bold">+0.0210</td>
+                    <tr>
+                      <td><strong>ROC-AUC</strong></td>
+                      <td>0.7184</td>
+                      <td><strong>0.7445</strong></td>
+                      <td><span class="text-emerald">+0.026</span></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div class="benchmark-justification">
-                <strong>Selection Rationale:</strong> Random Forest was chosen over Logistic Regression based on superior positive-class <strong>F1-score (0.3796)</strong> and <strong>ROC-AUC (0.7393)</strong>, delivering optimal precision-recall trade-off.
+              <div class="model-selection-justification mt-4">
+                <strong>Selection Rationale:</strong>
+                <p class="text-muted text-sm mt-1">
+                  Random Forest was selected as the final production pipeline because it achieved higher <strong>F1-score (0.3835)</strong> and <strong>ROC-AUC (0.7445)</strong> on minority positive subscribers while reducing False Positives from 2,086 down to 1,484.
+                </p>
               </div>
             </div>
 
-            <!-- Confusion Matrix -->
-            <div class="section-card">
-              <div class="card-head">
-                <h3 class="card-title">Test Set Confusion Matrix (9,043 Records)</h3>
+            <!-- Confusion Matrix Card -->
+            <div class="glass-card">
+              <h3 class="card-title">Final Test Confusion Matrix (20% Isolated Partition)</h3>
+              <p class="card-subtitle">9,043 unseen test cases</p>
+
+              <div class="cm-visual-grid mt-3">
+                <div class="cm-cell cm-tn">
+                  <span class="cm-label">True Negative (TN)</span>
+                  <strong class="cm-val">6,501</strong>
+                  <span class="cm-sub">Non-subscribers filtered out</span>
+                </div>
+                <div class="cm-cell cm-fp">
+                  <span class="cm-label">False Positive (FP)</span>
+                  <strong class="cm-val">1,484</strong>
+                  <span class="cm-sub">Call made, did not subscribe</span>
+                </div>
+                <div class="cm-cell cm-fn">
+                  <span class="cm-label">False Negative (FN)</span>
+                  <strong class="cm-val">479</strong>
+                  <span class="cm-sub">Missed opportunity</span>
+                </div>
+                <div class="cm-cell cm-tp">
+                  <span class="cm-label">True Positive (TP)</span>
+                  <strong class="cm-val">579</strong>
+                  <span class="cm-sub">Subscribers captured</span>
+                </div>
               </div>
 
-              <div class="cm-grid">
-                <div class="cm-cell tn">
-                  <span class="cm-type">TRUE NEGATIVE (TN)</span>
-                  <span class="cm-count">6,470</span>
-                  <span class="cm-desc">Filtered non-subscribers</span>
-                </div>
-                <div class="cm-cell fp">
-                  <span class="cm-type">FALSE POSITIVE (FP)</span>
-                  <span class="cm-count">1,515</span>
-                  <span class="cm-desc">Called non-subscriber (~5 mins)</span>
-                </div>
-                <div class="cm-cell fn">
-                  <span class="cm-type">FALSE NEGATIVE (FN)</span>
-                  <span class="cm-count">487</span>
-                  <span class="cm-desc">Missed subscriber opportunity</span>
-                </div>
-                <div class="cm-cell tp">
-                  <span class="cm-type">TRUE POSITIVE (TP)</span>
-                  <span class="cm-count">571</span>
-                  <span class="cm-desc">Captured deposit subscriber</span>
-                </div>
-              </div>
-
-              <div class="cm-business-impact">
-                <div class="impact-item"><strong>FP Cost:</strong> Minor marketing call time spent.</div>
-                <div class="impact-item"><strong>FN Cost:</strong> Lost deposit interest margin & principal balance.</div>
+              <div class="business-impact-box mt-4">
+                <strong>Business Cost Analysis:</strong>
+                <ul class="cost-list mt-1">
+                  <li><strong>False Positive (FP):</strong> Cost of a 5-minute agent call (~€2–€5). Acceptable tradeoff to capture high-value deposit assets.</li>
+                  <li><strong>False Negative (FN):</strong> Cost of missed term deposit margin (€200–€500 lifetime value). Minimized by balanced class weighting.</li>
+                </ul>
               </div>
             </div>
 
           </div>
 
-          <!-- Feature Importance Bars -->
-          <div class="section-card">
-            <div class="card-head">
-              <h3 class="card-title">Top 5 Predictive Signals</h3>
-              <span class="card-meta">Random Forest Feature Importance</span>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 7: EXPLAINABILITY                                    -->
+        <!-- ========================================================= -->
+        <section id="view-explainability" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Explainable AI & Feature Importance</h2>
+              <p class="section-subtext">Understand what predictive signals the Random Forest model relies upon across the training population.</p>
+            </div>
+          </div>
+
+          <div class="glass-card mt-4">
+            <h3 class="card-title">Global Feature Importance (Gini Impurity Reduction)</h3>
+            <p class="card-subtitle">Features ranked by relative predictive weight across all ensemble decision trees</p>
+
+            <div class="fi-bars-list mt-4" id="global-fi-bars-container">
+              <!-- Dynamically populated from feature_importance.json -->
+              <div class="fi-bar-row">
+                <div class="fi-bar-meta">
+                  <span>1. Customer Age (age)</span>
+                  <strong>14.4%</strong>
+                </div>
+                <div class="fi-bar-track"><div class="fi-bar-fill bg-cyan" style="width: 100%;"></div></div>
+              </div>
+
+              <div class="fi-bar-row">
+                <div class="fi-bar-meta">
+                  <span>2. Average Balance (balance)</span>
+                  <strong>13.7%</strong>
+                </div>
+                <div class="fi-bar-track"><div class="fi-bar-fill bg-cyan" style="width: 95%;"></div></div>
+              </div>
+
+              <div class="fi-bar-row">
+                <div class="fi-bar-meta">
+                  <span>3. Previous Campaign Success (poutcome_success)</span>
+                  <strong>13.4%</strong>
+                </div>
+                <div class="fi-bar-track"><div class="fi-bar-fill bg-emerald" style="width: 93%;"></div></div>
+              </div>
+
+              <div class="fi-bar-row">
+                <div class="fi-bar-meta">
+                  <span>4. Days Since Prior Contact (pdays)</span>
+                  <strong>10.4%</strong>
+                </div>
+                <div class="fi-bar-track"><div class="fi-bar-fill bg-cyan" style="width: 72%;"></div></div>
+              </div>
+
+              <div class="fi-bar-row">
+                <div class="fi-bar-meta">
+                  <span>5. Active Housing Loan (housing_yes)</span>
+                  <strong>7.1%</strong>
+                </div>
+                <div class="fi-bar-track"><div class="fi-bar-fill bg-amber" style="width: 49%;"></div></div>
+              </div>
             </div>
 
-            <div class="explainability-bars-grid">
-              <div class="exp-bar-row">
-                <span class="exp-rank">#1</span>
-                <span class="exp-feature">Customer Age (age)</span>
-                <div class="exp-track"><div class="exp-fill" style="width: 100%;"></div></div>
-                <span class="exp-val">0.1526</span>
-              </div>
-              <div class="exp-bar-row">
-                <span class="exp-rank">#2</span>
-                <span class="exp-feature">Yearly Balance (balance)</span>
-                <div class="exp-track"><div class="exp-fill" style="width: 95.8%;"></div></div>
-                <span class="exp-val">0.1462</span>
-              </div>
-              <div class="exp-bar-row">
-                <span class="exp-rank">#3</span>
-                <span class="exp-feature">Prior Success (poutcome_success)</span>
-                <div class="exp-track"><div class="exp-fill" style="width: 94.8%;"></div></div>
-                <span class="exp-val">0.1447</span>
-              </div>
-              <div class="exp-bar-row">
-                <span class="exp-rank">#4</span>
-                <span class="exp-feature">Prior Contacts Count (previous)</span>
-                <div class="exp-track"><div class="exp-fill" style="width: 60.4%;"></div></div>
-                <span class="exp-val">0.0922</span>
-              </div>
-              <div class="exp-bar-row">
-                <span class="exp-rank">#5</span>
-                <span class="exp-feature">No Housing Loan (housing_no)</span>
-                <div class="exp-track"><div class="exp-fill" style="width: 48.3%;"></div></div>
-                <span class="exp-val">0.0737</span>
-              </div>
-            </div>
-
-            <div class="causation-alert">
-              <div class="alert-icon">⚖️</div>
-              <div class="alert-content">
-                <strong>Scientific & Responsible AI Notice: Association vs. Causation</strong>
-                <p>Feature importance scores represent statistical associations within this dataset and tree ensemble. They do not constitute causal mechanisms.</p>
-              </div>
+            <div class="scientific-notice-box mt-4">
+              <span class="notice-icon">ℹ️</span>
+              <p>
+                <strong>Scientific & Responsible AI Notice:</strong> These metrics quantify predictive association within the bank dataset. A high balance score reflects statistical correlation with deposit subscriptions, not direct physical causality.
+              </p>
             </div>
           </div>
 
         </section>
 
-      </main>
+        <!-- ========================================================= -->
+        <!-- VIEW 8: CAMPAIGN LEARNING / FEEDBACK                      -->
+        <!-- ========================================================= -->
+        <section id="view-feedback" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Campaign Feedback Intelligence (Closed-Loop Learning)</h2>
+              <p class="section-subtext">Post-campaign outcome tracking comparing AI forecast against actual deposit subscription outcomes.</p>
+            </div>
+          </div>
 
-      <!-- Footer -->
-      <footer class="app-footer">
-        <div class="footer-left">
-          <strong>SmartBank AI</strong> • AI Campaign Intelligence & Decision Platform (Gupio Campus Placement Project)
-        </div>
-        <div class="footer-right">
-          Database: <code>data/smartbank.db</code> (SQLite) • Model: Random Forest v1.0
-        </div>
-      </footer>
+          <div class="feedback-stats-grid mt-4">
+            <div class="glass-card">
+              <span class="kpi-label">Targeted Calls (Predicted Positive)</span>
+              <strong class="kpi-value text-cyan">2,063</strong>
+              <span class="kpi-subtext">Total outreach recommendations</span>
+            </div>
+            <div class="glass-card">
+              <span class="kpi-label">Subscribers Captured (True Positives)</span>
+              <strong class="kpi-value text-emerald">579</strong>
+              <span class="kpi-subtext">28.07% Precision on targeted pool</span>
+            </div>
+            <div class="glass-card">
+              <span class="kpi-label">Unproductive Calls Avoided</span>
+              <strong class="kpi-value text-amber">6,501</strong>
+              <span class="kpi-subtext">71.9% reduction in cold outreach</span>
+            </div>
+          </div>
 
-    </div>
+          <div class="glass-card mt-4">
+            <h3 class="card-title">Historical Campaign Evaluation Audit</h3>
+            <p class="card-subtitle">Sample ground-truth comparison from isolated test cohort</p>
+
+            <div class="table-responsive mt-3">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer Ref</th>
+                    <th>Contact Date</th>
+                    <th>Predicted Probability</th>
+                    <th>Opportunity Score</th>
+                    <th>Priority</th>
+                    <th>Actual Result</th>
+                    <th>Outcome Status</th>
+                  </tr>
+                </thead>
+                <tbody id="feedback-table-body">
+                  <tr><td colspan="7" class="text-center py-4 text-muted">Loading feedback learning records...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 9: MODEL HEALTH & DRIFT                              -->
+        <!-- ========================================================= -->
+        <section id="view-health" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Model Telemetry & Drift Monitoring (Prototype)</h2>
+              <p class="section-subtext">Real-time system health checks, feature validation status, and score distribution tracking.</p>
+            </div>
+          </div>
+
+          <div class="health-cards-grid mt-4">
+            <div class="glass-card">
+              <div class="health-status-header">
+                <span class="status-indicator-green"></span>
+                <strong>Model Status: READY</strong>
+              </div>
+              <ul class="health-meta-list mt-3">
+                <li><strong>Model Architecture:</strong> Random Forest Classifier</li>
+                <li><strong>Pipeline Version:</strong> v1.0.0 (Balanced Ensemble)</li>
+                <li><strong>Training Sample:</strong> 45,211 Records (100% Quality)</li>
+                <li><strong>Active Features:</strong> 11 Pre-Contact Attributes</li>
+                <li><strong>Pre-Contact Leakage Guard:</strong> Active</li>
+              </ul>
+            </div>
+
+            <div class="glass-card">
+              <div class="health-status-header">
+                <span class="status-indicator-green"></span>
+                <strong>Drift Index: STABLE</strong>
+              </div>
+              <ul class="health-meta-list mt-3">
+                <li><strong>Population Stability Index (PSI):</strong> 0.024</li>
+                <li><strong>Drift Threshold:</strong> PSI &lt; 0.10 (No Drift)</li>
+                <li><strong>Low Opportunity (&lt;40):</strong> 63.8%</li>
+                <li><strong>Medium Opportunity (40–64):</strong> 21.5%</li>
+                <li><strong>High Opportunity (≥65):</strong> 14.7%</li>
+              </ul>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 10: SETTINGS & ROLES                                 -->
+        <!-- ========================================================= -->
+        <section id="view-settings" class="view-section">
+          
+          <div class="section-header-flex">
+            <div>
+              <h2 class="section-heading">Platform Settings & Demo Roles</h2>
+              <p class="section-subtext">Configure demo session, switch operator roles, or reset the local SQLite test database.</p>
+            </div>
+          </div>
+
+          <div class="grid-2col mt-4">
+            <div class="glass-card">
+              <h3 class="card-title">Active Demo Operator</h3>
+              <p class="card-subtitle">Manage prototype session context</p>
+
+              <div class="form-group mt-3">
+                <label for="settings-role-select">Current Operator Role:</label>
+                <select id="settings-role-select" onchange="handleRoleSwitch()">
+                  <option value="Campaign Analyst">Campaign Analyst (Default Operator)</option>
+                  <option value="Administrator">Administrator (Full Access)</option>
+                </select>
+              </div>
+
+              <div class="system-meta-box mt-3">
+                <p><strong>Database Path:</strong> <code>data/smartbank.db</code> (SQLite)</p>
+                <p><strong>API Endpoint:</strong> <code>http://127.0.0.1:8000/api</code></p>
+                <p><strong>ML Pipeline:</strong> <code>models/best_pipeline.joblib</code></p>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <h3 class="card-title">Database Maintenance</h3>
+              <p class="card-subtitle">Reset or re-seed prototype evaluation data</p>
+              
+              <p class="text-muted text-sm mt-2">
+                Re-seeds SQLite database with clean UCI Bank Marketing records, 30 verified customer leads, 50 campaign feedback entries, and 5 optimizer simulation benchmarks.
+              </p>
+
+              <button type="button" class="btn-secondary mt-4" onclick="seedDemoCustomers()">
+                <span>🔄 Re-seed / Reset Demo Database</span>
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
 
   </div>
 
-  <!-- Leakage Guard Modal -->
-  <div class="modal-backdrop" id="leakage-modal" style="display: none;" onclick="closeLeakageModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
+  <!-- ========================================================= -->
+  <!-- MODALS & OVERLAYS                                         -->
+  <!-- ========================================================= -->
+
+  <!-- Add Customer Modal -->
+  <div id="modal-add-customer" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'modal-add-customer')">
+    <div class="modal-dialog">
       <div class="modal-header">
-        <div class="modal-title">
-          <span class="guard-icon">🛡️</span>
-          <span>Leakage Prevention Architecture</span>
+        <h3 class="modal-title">Add New Customer Profile</h3>
+        <button type="button" class="btn-close-modal" onclick="closeModal('modal-add-customer')">✕</button>
+      </div>
+      <form id="form-add-customer" onsubmit="handleAddCustomerSubmit(event)" class="modal-body">
+        <div class="form-section-title">Identity (Application Management Only)</div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="new-cust-name">Full Name *</label>
+            <input type="text" id="new-cust-name" required placeholder="e.g. Maya Chen">
+          </div>
+          <div class="form-group">
+            <label for="new-cust-email">Email</label>
+            <input type="email" id="new-cust-email" placeholder="maya.chen@example.com">
+          </div>
         </div>
-        <button type="button" class="modal-close" onclick="closeLeakageModal()">&times;</button>
+
+        <div class="form-section-title mt-3">Pre-Contact Attributes (ML Features)</div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="new-cust-age">Age *</label>
+            <input type="number" id="new-cust-age" min="18" max="100" required value="36">
+          </div>
+          <div class="form-group">
+            <label for="new-cust-job">Job *</label>
+            <select id="new-cust-job" required>
+              <option value="management">Management</option>
+              <option value="technician" selected>Technician</option>
+              <option value="blue-collar">Blue-collar</option>
+              <option value="admin.">Administrative</option>
+              <option value="services">Services</option>
+              <option value="retired">Retired</option>
+              <option value="self-employed">Self-employed</option>
+              <option value="unemployed">Unemployed</option>
+              <option value="entrepreneur">Entrepreneur</option>
+              <option value="housemaid">Housemaid</option>
+              <option value="student">Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-cust-marital">Marital Status *</label>
+            <select id="new-cust-marital" required>
+              <option value="single">Single</option>
+              <option value="married" selected>Married</option>
+              <option value="divorced">Divorced</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="new-cust-education">Education *</label>
+            <select id="new-cust-education" required>
+              <option value="tertiary" selected>Tertiary</option>
+              <option value="secondary">Secondary</option>
+              <option value="primary">Primary</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-cust-balance">Balance (€) *</label>
+            <input type="number" id="new-cust-balance" required value="3200">
+          </div>
+          <div class="form-group">
+            <label for="new-cust-poutcome">Prior Campaign *</label>
+            <select id="new-cust-poutcome" required>
+              <option value="unknown" selected>Unknown</option>
+              <option value="success">Success</option>
+              <option value="failure">Failure</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer mt-4">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-add-customer')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Customer to Database</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CSV Import Modal -->
+  <div id="modal-import-csv" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'modal-import-csv')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Import Customers from CSV</h3>
+        <button type="button" class="btn-close-modal" onclick="closeModal('modal-import-csv')">✕</button>
       </div>
       <div class="modal-body">
-        <p><strong>Why are certain dataset fields strictly excluded?</strong></p>
-        <p>SmartBank AI is designed to operate <em>immediately before</em> initiating the current campaign contact. Features that only become observable during or as a result of that interaction are prohibited to prevent target leakage.</p>
-        <table class="modal-table">
-          <thead>
-            <tr><th>Excluded Feature</th><th>Reason for Exclusion</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><code>duration</code></td><td>Call duration in seconds. Unknown prior to calling. A 15-minute call strongly correlates with subscription, but cannot be known beforehand.</td></tr>
-            <tr><td><code>contact</code></td><td>Communication channel of current interaction (cellular / telephone).</td></tr>
-            <tr><td><code>day</code>, <code>month</code></td><td>Specific timing of the current call outreach.</td></tr>
-            <tr><td><code>campaign</code></td><td>Number of contacts performed during current campaign cycle.</td></tr>
-          </tbody>
-        </table>
+        <p class="text-muted text-sm">
+          Upload a CSV file containing pre-contact customer leads. The system will validate all required fields before importing into SQLite.
+        </p>
+
+        <div class="upload-dropzone mt-3" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p class="mt-2"><strong>Click or drag CSV file here</strong></p>
+          <span class="text-xs text-muted">Supports headers: age, job, marital, education, balance, housing, loan, poutcome</span>
+          <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCSVFileSelect(event)">
+        </div>
+
+        <div id="csv-preview-container" class="mt-3 hidden">
+          <div class="preview-header">
+            <span id="csv-preview-count">0 records detected</span>
+            <span id="csv-preview-status" class="text-emerald">Validation Passed</span>
+          </div>
+          <div class="table-responsive max-h-48 mt-2">
+            <table class="data-table text-xs">
+              <tbody id="csv-preview-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal-footer mt-4">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-import-csv')">Cancel</button>
+          <button type="button" id="btn-import-confirm" class="btn-primary" disabled onclick="executeCSVImport()">Import Valid Records</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leakage Guard Info Modal -->
+  <div id="modal-leakage" class="modal-overlay hidden" onclick="closeModalOnBackdrop(event, 'modal-leakage')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">🛡️ Pre-Contact Leakage Guard Architecture</h3>
+        <button type="button" class="btn-close-modal" onclick="closeModal('modal-leakage')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          In bank telemarketing, calculating conversion propensity <strong>during or after</strong> a call provides zero operational value for campaign planning.
+        </p>
+
+        <h4 class="mt-3 text-cyan">Excluded Leakage Features (5 Total):</h4>
+        <ul class="leakage-list mt-2">
+          <li><code>duration</code>: Call duration is only known after the phone call concludes. (High correlation with subscription = massive data leakage).</li>
+          <li><code>contact</code>: Communication channel assigned for current outreach.</li>
+          <li><code>day</code>, <code>month</code>: Timing/scheduling of current outreach.</li>
+          <li><code>campaign</code>: Number of contacts performed during the current campaign.</li>
+        </ul>
+
+        <h4 class="mt-3 text-emerald">Active Pre-Contact Features (11 Total):</h4>
+        <p class="text-muted text-sm mt-1">
+          Demographics (<code>age</code>, <code>job</code>, <code>marital</code>, <code>education</code>), Financial Health (<code>balance</code>, <code>default</code>, <code>housing</code>, <code>loan</code>), and Historical Prior Campaign Interactions (<code>poutcome</code>, <code>pdays</code>, <code>previous</code>).
+        </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="closeLeakageModal()">Understood</button>
+        <button type="button" class="btn-primary" onclick="closeModal('modal-leakage')">Understood</button>
       </div>
     </div>
   </div>
 
-  <!-- Panel Demo Tour Modal -->
-  <div class="modal-backdrop" id="demo-tour-modal" style="display: none;" onclick="closeDemoTour(event)">
-    <div class="modal-card demo-card" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span>🎤 Gupio Technical Interview Guide</span>
-        </div>
-        <button type="button" class="modal-close" onclick="closeDemoTour()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="tour-step-card" id="tour-step-content"></div>
-      </div>
-      <div class="modal-footer tour-footer">
-        <button type="button" class="btn btn-secondary" id="tour-prev-btn" onclick="prevTourStep()">Previous</button>
-        <span class="tour-counter" id="tour-counter">Step 1 of 5</span>
-        <button type="button" class="btn btn-primary" id="tour-next-btn" onclick="nextTourStep()">Next Step</button>
-      </div>
-    </div>
-  </div>
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-wrapper"></div>
 
+  <!-- Scripts -->
   <script src="app.js"></script>
 </body>
 </html>

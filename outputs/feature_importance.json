@@ -4,193 +4,197 @@
     "top_features": [
         {
             "feature": "age",
-            "importance": 0.15262
+            "importance": 0.14427
         },
         {
             "feature": "balance",
-            "importance": 0.14621
+            "importance": 0.13669
         },
         {
             "feature": "poutcome_success",
-            "importance": 0.14472
+            "importance": 0.13414
         },
         {
-            "feature": "previous",
-            "importance": 0.09219
-        },
-        {
-            "feature": "housing_no",
-            "importance": 0.07373
+            "feature": "pdays",
+            "importance": 0.10362
         },
         {
             "feature": "housing_yes",
-            "importance": 0.06736
+            "importance": 0.071
+        },
+        {
+            "feature": "housing_no",
+            "importance": 0.06455
+        },
+        {
+            "feature": "previous",
+            "importance": 0.05502
         },
         {
             "feature": "poutcome_unknown",
-            "importance": 0.06161
+            "importance": 0.0452
         },
         {
             "feature": "marital_married",
-            "importance": 0.02475
+            "importance": 0.02188
         },
         {
             "feature": "poutcome_failure",
-            "importance": 0.02181
-        },
-        {
-            "feature": "loan_yes",
-            "importance": 0.01958
+            "importance": 0.02182
         },
         {
             "feature": "marital_single",
-            "importance": 0.01886
+            "importance": 0.02014
+        },
+        {
+            "feature": "loan_yes",
+            "importance": 0.01753
         },
         {
             "feature": "loan_no",
-            "importance": 0.0176
+            "importance": 0.01673
         },
         {
             "feature": "job_blue-collar",
-            "importance": 0.01745
+            "importance": 0.01516
         },
         {
             "feature": "education_tertiary",
-            "importance": 0.01574
-        },
-        {
-            "feature": "job_retired",
-            "importance": 0.01424
+            "importance": 0.01479
         }
     ],
     "all_features": [
         {
             "feature": "age",
-            "importance": 0.15262
+            "importance": 0.14427
         },
         {
             "feature": "balance",
-            "importance": 0.14621
+            "importance": 0.13669
         },
         {
             "feature": "poutcome_success",
-            "importance": 0.14472
+            "importance": 0.13414
         },
         {
-            "feature": "previous",
-            "importance": 0.09219
-        },
-        {
-            "feature": "housing_no",
-            "importance": 0.07373
+            "feature": "pdays",
+            "importance": 0.10362
         },
         {
             "feature": "housing_yes",
-            "importance": 0.06736
+            "importance": 0.071
+        },
+        {
+            "feature": "housing_no",
+            "importance": 0.06455
+        },
+        {
+            "feature": "previous",
+            "importance": 0.05502
         },
         {
             "feature": "poutcome_unknown",
-            "importance": 0.06161
+            "importance": 0.0452
         },
         {
             "feature": "marital_married",
-            "importance": 0.02475
+            "importance": 0.02188
         },
         {
             "feature": "poutcome_failure",
-            "importance": 0.02181
-        },
-        {
-            "feature": "loan_yes",
-            "importance": 0.01958
+            "importance": 0.02182
         },
         {
             "feature": "marital_single",
-            "importance": 0.01886
+            "importance": 0.02014
+        },
+        {
+            "feature": "loan_yes",
+            "importance": 0.01753
         },
         {
             "feature": "loan_no",
-            "importance": 0.0176
+            "importance": 0.01673
         },
         {
             "feature": "job_blue-collar",
-            "importance": 0.01745
+            "importance": 0.01516
         },
         {
             "feature": "education_tertiary",
-            "importance": 0.01574
+            "importance": 0.01479
         },
         {
             "feature": "job_retired",
-            "importance": 0.01424
+            "importance": 0.01279
         },
         {
             "feature": "education_primary",
-            "importance": 0.0117
+            "importance": 0.01127
         },
         {
             "feature": "job_student",
-            "importance": 0.01022
-        },
-        {
-            "feature": "poutcome_other",
-            "importance": 0.01
+            "importance": 0.01122
         },
         {
             "feature": "education_secondary",
-            "importance": 0.00915
+            "importance": 0.00928
+        },
+        {
+            "feature": "poutcome_other",
+            "importance": 0.00841
         },
         {
             "feature": "marital_divorced",
-            "importance": 0.00775
+            "importance": 0.00756
         },
         {
             "feature": "job_management",
-            "importance": 0.00708
+            "importance": 0.0064
         },
         {
             "feature": "job_admin.",
-            "importance": 0.00653
-        },
-        {
-            "feature": "job_services",
-            "importance": 0.00637
+            "importance": 0.00618
         },
         {
             "feature": "job_technician",
-            "importance": 0.00628
+            "importance": 0.0059
+        },
+        {
+            "feature": "job_services",
+            "importance": 0.0055
         },
         {
             "feature": "education_unknown",
-            "importance": 0.00593
+            "importance": 0.00516
         },
         {
             "feature": "job_self-employed",
-            "importance": 0.00522
+            "importance": 0.0049
         },
         {
             "feature": "job_entrepreneur",
-            "importance": 0.00509
+            "importance": 0.00469
         },
         {
             "feature": "default_yes",
-            "importance": 0.00466
-        },
-        {
-            "feature": "job_housemaid",
-            "importance": 0.00463
+            "importance": 0.00427
         },
         {
             "feature": "job_unemployed",
-            "importance": 0.00442
+            "importance": 0.00426
         },
         {
             "feature": "default_no",
-            "importance": 0.00422
+            "importance": 0.00399
+        },
+        {
+            "feature": "job_housemaid",
+            "importance": 0.00369
         },
         {
             "feature": "job_unknown",
-            "importance": 0.00228
+            "importance": 0.002
         }
     ]
 }

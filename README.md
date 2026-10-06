@@ -1,291 +1,215 @@
-# SmartBank AI — Pre-Contact Term Deposit Subscription Prediction & Campaign Intelligence
+# SmartBank AI — AI Campaign Intelligence & Customer Decision Platform
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg)](https://fastapi.tiangolo.com/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.5%2B-F7931E.svg)](https://scikit-learn.org/)
+[![SQLite 3](https://img.shields.io/badge/SQLite-3-003B57.svg)](https://www.sqlite.org/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8.svg)](https://web.dev/progressive-web-apps/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An enterprise-grade, leakage-safe machine learning system designed to estimate bank customer term deposit subscription likelihood **strictly before** initiating direct marketing outreach.
+> **Predict. Prioritize. Act.**  
+> An enterprise-grade, leakage-safe AI Campaign Intelligence & Decision Engine designed to evaluate customer term-deposit propensity, optimize team calling capacity, and automate deterministic next best actions before direct outreach begins.
 
 ---
 
-## 1. Project Overview
-In retail banking, outbound direct marketing campaigns (telephone outreach) represent a significant operational cost. Contacting every customer indiscriminately leads to customer fatigue, low conversion rates, and wasted agent hours. 
+## 🏛️ 1. Platform Positioning & Architecture
 
-**SmartBank AI** transforms raw bank customer demographic and historical interaction data into an actionable **Opportunity Score (0–100)** and triage **Campaign Priority (HIGH / MEDIUM / LOW)** before any call is made.
+SmartBank AI is designed not just as a one-off bank classifier, but as a **reusable AI campaign-intelligence platform** demonstrated on the UCI Bank Marketing dataset.
+
+```
+                            SMARTBANK AI
+                                 │
+                         DEMO AUTHENTICATION
+                   (Analyst / Admin Demo Roles)
+                                 │
+                        CAMPAIGN DASHBOARD
+                                 │
+                ┌────────────────┴────────────────┐
+                ▼                                 ▼
+       CUSTOMER MANAGEMENT                CAMPAIGN DATA POOL
+                │                                 │
+                └────────────────┬────────────────┘
+                                 ▼
+                    PRE-CONTACT DATA VALIDATION
+                                 │
+                                 ▼
+                     LEAKAGE GUARD ENFORCEMENT
+            (Excluded: duration, contact, day, month, campaign)
+                                 │
+                                 ▼
+                   BALANCED ML PIPELINE (RF v1.0)
+                                 │
+                ┌────────────────┴────────────────┐
+                ▼                                 ▼
+      PROBABILITY INFERENCE               PREDICTIVE SIGNALS
+                │                                 │
+                └────────────────┬────────────────┘
+                                 ▼
+                       OPPORTUNITY SCORE (0–100)
+                                 │
+                                 ▼
+                       CAMPAIGN PRIORITY TRIAGE
+                         (HIGH / MEDIUM / LOW)
+                                 │
+                                 ▼
+                     AI CAMPAIGN OPTIMIZER (3.8x Lift)
+                                 │
+                                 ▼
+                    DETERMINISTIC NEXT BEST ACTION
+                                 │
+                                 ▼
+                      SQLITE PERSISTENCE ENGINE
+                         (data/smartbank.db)
+                                 │
+                                 ▼
+                     CAMPAIGN FEEDBACK LEARNING
+                                 │
+                                 ▼
+                   MODEL TELEMETRY & DRIFT (PSI)
+```
 
 ---
 
-## 2. Business Problem & Objective
-* **Core Question:** *Can we identify customers who are most likely to subscribe to a term deposit before picking up the phone?*
-* **Target Variable:** Binary deposit subscription (`y`: `yes` vs. `no`).
-* **Objective:** Maximize positive-class detection (Recall & F1-Score) and ranking ability (ROC-AUC) within a strict pre-contact boundary, enabling relationship managers to prioritize high-value conversations.
+## 🧩 2. Six Core AI Modules
+
+| Module | Purpose | Real Implementation |
+| :--- | :--- | :--- |
+| **1. 🎯 Customer Propensity Engine** | Pre-contact prediction | Random Forest Classifier trained with `class_weight='balanced'`. Computes pre-contact subscription probability and Opportunity Score ($0–100$). |
+| **2. 🚀 Campaign Optimizer** | Capacity-constrained triage | Solves calling capacity limits (e.g. 2,000 slots). Ranks entire lead pool, bins into **Tier A** (🔥 Contact First), **Tier B** (🟡 Next), **Tier C** (⚪ Nurture), **Tier D** (⚫ Suppress), and generates expected conversion yield & **3.8x efficiency lift**. |
+| **3. 🧠 Explainable AI Signals** | Transparent model interpretation | Directional predictive associations (e.g., Previous Campaign Success $+$, No Housing Debt $+$, High Balance $+$, Active Personal Loan $-$) with explicit non-causal disclaimer. |
+| **4. 💡 Next Best Action** | Operational decision rules | Deterministic business rules converting ML scores into banking actions: Senior RM outreach ($\ge 65$), Digital Nudge ($40-64$), or Outbound Call Suppression ($<40$). |
+| **5. 🔄 Campaign Feedback Intelligence** | Closed-loop evaluation | Compares predicted positive calls against actual subscriptions ($579$ TP captured, $6,501$ non-subscribers avoided, saving $71.9\%$ of wasted cold call agent hours). |
+| **6. 🛡️ Model Health & Drift** | Telemetry & production readiness | Live monitoring of data quality ($0$ nulls, $0$ duplicates), Population Stability Index (PSI = $0.024$, healthy), score distribution, and Leakage Guard status. |
 
 ---
 
-## 3. Dataset Specification
-* **Source:** UCI Bank Marketing Dataset (ID: 222).
-* **Instance Count:** 45,211 rows.
-* **Feature Count:** 17 columns (semicolon-delimited `bank-full.csv`).
-* **Target Distribution:** 
-  * `no`: 39,922 records (88.30%)
-  * `yes`: 5,289 records (11.70%) — *Significant Class Imbalance*
+## 🛡️ 3. Pre-Contact Leakage Guard Contract
 
----
-
-## 4. Prediction Point Definition
-The system enforces a clear operational boundary:
-$$\text{Prediction Point} \equiv \text{Immediately prior to the current campaign contact}$$
-
-All information that only becomes observable during or after the telephone conversation is unavailable at inference time.
-
----
-
-## 5. Strict Leakage Prevention
-To guarantee that the model is production-realistic, the following features were **strictly excluded**:
+The model predicts strictly **before contact initiation**. In-campaign and post-contact variables are excluded:
 
 | Excluded Feature | Reason for Exclusion | Leakage Mechanism |
 | :--- | :--- | :--- |
-| `duration` | Call duration in seconds | Unknown before the call is answered. A long duration heavily correlates with subscription but is a post-contact outcome. |
-| `contact` | Contact communication type | Relates directly to the current outreach action. |
-| `day` | Day of the month | Specific to current campaign timing. |
-| `month` | Last contact month | Specific to current campaign timing. |
-| `campaign` | Number of contacts in current campaign | Dynamic attribute of current outreach cycle. |
-| `pdays` | Days since previous contact | Excluded or sanitized to avoid post-campaign leakage. |
+| `duration` | Call duration in seconds | Unknown before the call is answered. High duration correlates with subscription but is a post-contact outcome. |
+| `contact` | Communication channel | Assigned during the current outreach action. |
+| `day`, `month` | Contact day/month | Scheduling attributes of current outreach. |
+| `campaign` | In-campaign contact count | Dynamic counter of current campaign cycle. |
 
-### Retained Pre-Contact Features (10 Total):
-* **Numerical (3):** `age`, `balance`, `previous`
-* **Categorical (7):** `job`, `marital`, `education`, `default`, `housing`, `loan`, `poutcome`
-
----
-
-## 6. Exploratory Data Analysis (EDA)
-* **Missing Values (NaN):** 0 null entries across all 45,211 records.
-* **Duplicate Rows:** 0 duplicate rows detected.
-* **Class Ratio:** ~7.5 to 1 ratio (`no` to `yes`).
-* **Key Observations:**
-  * Customers with prior campaign `success` show markedly higher subscription probability.
-  * Absence of a housing loan (`housing = 'no'`) is positively associated with subscription likelihood.
-  * Higher average balance (`balance > €2,000`) and senior/retired demographic profiles show elevated deposit affinity.
+### Active Pre-Contact Features (11 Total):
+* **Demographics (4):** `age`, `job`, `marital`, `education`
+* **Financial Profile (4):** `balance`, `default`, `housing`, `loan`
+* **Historical Prior Campaign Context (3):** `poutcome`, `pdays`, `previous`
 
 ---
 
-## 7. Preprocessing & Leakage-Safe Pipeline Architecture
-Preprocessing is encapsulated inside an isolated `sklearn.pipeline.Pipeline` with `ColumnTransformer`:
-* **Numerical Pipeline:** `SimpleImputer(strategy='median')` $\rightarrow$ `StandardScaler()`
-* **Categorical Pipeline:** `SimpleImputer(strategy='most_frequent')` $\rightarrow$ `OneHotEncoder(handle_unknown='ignore', sparse_output=False)`
+## 📊 4. Real Model Evaluation Benchmarks
 
-> **Zero Leakage Rule:** Preprocessor transformations are **fitted exclusively on the training split** and applied onto validation and unseen test sets without refitting encoders or scalers.
+*Evaluated on isolated 20% Unseen Test Set (9,043 records) from UCI Bank Marketing dataset:*
 
----
+| Metric | Logistic Regression (Baseline) | Random Forest (Selected Model) | Advantage |
+| :--- | :--- | :--- | :--- |
+| **Accuracy** | 70.89% | **78.29%** | $+7.40\%$ |
+| **Precision** | 22.34% | **28.07%** | $+5.73\%$ |
+| **Recall** | 60.17% | **54.73%** | High Sensitivity |
+| **Positive F1-Score** | 0.3259 | **0.3710** | $+13.8\%$ Relative Lift |
+| **ROC-AUC** | 0.7184 | **0.7348** | $+0.016$ |
 
-## 8. Class Imbalance Handling
-Because the positive class (`yes`) constitutes only 11.70% of the dataset:
-* Naive models predicting `no` for all cases achieve **88.30% accuracy** while offering **0% business utility**.
-* We incorporated cost-sensitive learning via `class_weight='balanced'` in both baseline and ensemble classifiers.
-* Evaluation prioritizes **Precision, Recall, F1-Score, and ROC-AUC** over raw Accuracy.
-
----
-
-## 9. 3-Way Stratified Data Splitting Strategy
-```
-45,211 Total Records
- │
- ├── Development Set (80% — 36,168 records)
- │    ├── Training Partition (64% — 28,934 records) [Fit Preprocessor & Models]
- │    └── Validation Partition (16% — 7,234 records) [Model Selection Benchmark]
- │
- └── Final Unseen Test Set (20% — 9,043 records) [Strictly Isolated from Model Selection]
-```
+### Confusion Matrix (Test Set Partition: 9,043 Cases):
+* **True Negatives (TN):** $6,501$ non-subscribers successfully filtered out.
+* **False Positives (FP):** $1,484$ calls made that did not subscribe (~5 min call cost).
+* **False Negatives (FN):** $479$ missed opportunities (minimized by balanced class weighting).
+* **True Positives (TP):** $579$ deposit subscribers captured.
 
 ---
 
-## 10. Model Comparison & Selection
+## 🗄️ 5. SQLite Persistence Engine (`data/smartbank.db`)
 
-| Metric | Logistic Regression (Baseline) | Random Forest (Ensemble) | Selected Final Model |
-| :--- | :---: | :---: | :---: |
-| **Validation Accuracy** | 70.90% | **78.45%** | 🏆 **Random Forest** |
-| **Positive Precision** | 22.31% | **28.61%** | 🏆 **Random Forest** |
-| **Positive Recall** | **59.93%** | 56.38% | — |
-| **F1-Score** | 0.3251 | **0.3796** | 🏆 **Random Forest (+0.0545)** |
-| **ROC-AUC** | 0.7183 | **0.7393** | 🏆 **Random Forest (+0.0210)** |
+All application activity is persisted in SQLite across 6 structured tables:
 
-### Selection Rationale:
-* **Random Forest** demonstrated superior discrimination capability (ROC-AUC: 0.7393 vs 0.7183) and a significantly higher F1-score (+16.7% relative improvement), striking the optimal precision-recall balance for campaign resource allocation.
+1. **`users`**: Demo accounts (`analyst@smartbank.ai` / `demo123`, `admin@smartbank.ai` / `admin123`).
+2. **`customers`**: Customer lead directory with demographic and financial attributes.
+3. **`assessments`**: Logged prediction events with Opportunity Scores, priorities, and predictive signals.
+4. **`campaign_optimizer_runs`**: Capacity optimization benchmarks and simulation runs.
+5. **`campaign_feedback`**: Ground-truth historical feedback comparisons.
+6. **`model_telemetry`**: Model health snapshots, PSI drift score, and prediction distribution.
 
 ---
 
-## 11. Final Unseen Test Evaluation
-After refitting the winning Random Forest pipeline on the full 80% Development dataset, it was evaluated once on the isolated 20% Unseen Test Set (9,043 rows):
+## 🚀 6. Running Locally
 
-* **Test Accuracy:** 77.86%
-* **Test Precision:** 27.37%
-* **Test Recall:** 53.97%
-* **Test F1-Score:** 0.3632
-* **Test ROC-AUC:** **0.7288**
-
-### Confusion Matrix (Test Set):
-```
-                 Predicted NO    Predicted YES
- Actual NO          6,470            1,515
- Actual YES           487              571
-```
-
----
-
-## 12. Feature Interpretability & Predictive Signals
-Extracting top predictive signals from the Random Forest model:
-
-1. **`age`** (Importance: `0.1526`)
-2. **`balance`** (Importance: `0.1462`)
-3. **`poutcome_success`** (Importance: `0.1447`)
-4. **`previous`** (Importance: `0.0922`)
-5. **`housing_no`** (Importance: `0.0737`)
-
-> **Scientific Disclaimer:** Feature importance reflects mathematical association within the predictive pipeline. It indicates statistical predictive correlation rather than causal mechanisms.
-
----
-
-## 13. System Architecture & File Structure
-```
-SmartBank-AI/
-│
-├── backend/
-│   └── app.py                      # FastAPI inference & dashboard telemetry service
-│
-├── data/
-│   └── bank-full.csv               # UCI Bank Marketing dataset (45,211 rows)
-│
-├── frontend/
-│   ├── index.html                  # Interactive modern fintech interface
-│   ├── styles.css                  # Dark luxury glassmorphism design system
-│   └── app.js                      # Dynamic client logic, API hooks & fallback simulation
-│
-├── models/
-│   └── best_pipeline.joblib        # Fitted ColumnTransformer + Random Forest pipeline
-│
-├── notebooks/
-│   └── bank_marketing_analysis.ipynb # EDA & experimental analysis notebook
-│
-├── outputs/
-│   ├── metrics.json                # Complete validation & test evaluation metrics
-│   ├── eda_summary.json            # Dataset shape, missing values & target distribution
-│   ├── feature_importance.json     # Ranked predictive signals & coefficients
-│   ├── sample_test_records.csv     # Sample evaluation inference outputs
-│   ├── confusion_matrix.png        # Seaborn confusion matrix visualization
-│   ├── model_comparison.png        # Bar chart comparison of models
-│   └── roc_curve.png               # ROC curve with AUC score
-│
-├── src/
-│   └── train.py                    # End-to-end reproducible training script
-│
-├── .gitignore                      # Safeguards virtual environment, secrets & cache
-├── README.md                       # Comprehensive project documentation
-└── requirements.txt                # Pinned production dependencies
-```
-
----
-
-## 14. Installation & Setup
-
-### Step 1: Clone Repository
-```bash
+### Step 1: Clone & Setup Environment
+```powershell
 git clone https://github.com/smitha2422/SmartBank-ai.git
 cd SmartBank-ai
-```
 
-### Step 2: Create & Activate Virtual Environment
-```bash
-# Windows
+# Create & activate virtual environment
 python -m venv .venv
 .venv\Scripts\activate
 
-# Linux / macOS
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### Step 3: Install Dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
----
-
-## 15. Execution Instructions
-
-### A. Run End-to-End Machine Learning Pipeline
-```bash
+### Step 2: Train Model & Seed Database
+```powershell
+# 1. Run leakage-safe training pipeline
 python src/train.py
-```
-*Generates model artifacts in `models/` and visual metrics in `outputs/`.*
 
-### B. Start FastAPI Inference Backend
-```bash
+# 2. Seed SQLite database with verified leads & benchmarks
+python src/seed_db.py
+```
+
+### Step 3: Start Application Server
+```powershell
 uvicorn backend.app:app --reload --port 8000
 ```
-* Interactive API Documentation (Swagger UI): `http://127.0.0.1:8000/docs`
-* Health Check: `http://127.0.0.1:8000/health`
-* Dashboard Telemetry: `http://127.0.0.1:8000/dashboard`
+Open **`http://127.0.0.1:8000`** in your browser.
 
-### C. Launch Interactive Frontend Dashboard
-```bash
-# In a new terminal window (with .venv active):
-python -m http.server 5500 -d frontend
-```
-* Open your browser at: **`http://127.0.0.1:5500`**
+> **Demo Login Credentials:**
+> - **Campaign Analyst:** `analyst@smartbank.ai` / `demo123`
+> - **Administrator:** `admin@smartbank.ai` / `admin123`
 
 ---
 
-## 16. API Specification (`POST /predict`)
+## 📁 7. Repository Structure
 
-### Example Request Body:
-```json
-{
-  "age": 58,
-  "job": "management",
-  "marital": "married",
-  "education": "tertiary",
-  "default": "no",
-  "balance": 3250.0,
-  "housing": "no",
-  "loan": "no",
-  "poutcome": "success",
-  "previous": 2
-}
 ```
-
-### Example Response:
-```json
-{
-  "probability": 0.724,
-  "opportunity_score": 72,
-  "campaign_priority": "HIGH",
-  "prediction_label": "Likely to Subscribe",
-  "recommendation": "High engagement opportunity: Assign to senior relationship manager with premium deposit terms.",
-  "predictive_signals": [
-    { "factor": "Previous Campaign Success", "impact": "Strong Positive", "type": "positive" },
-    { "factor": "No Housing Loan Obligation", "impact": "Positive", "type": "positive" },
-    { "factor": "Healthy Account Balance (>€2,000)", "impact": "Positive", "type": "positive" }
-  ],
-  "disclaimer": "The Opportunity Score translates predictive likelihood into a campaign prioritization signal. It represents statistical association and does not guarantee subscription."
-}
+SmartBank-AI/
+├── backend/
+│   ├── app.py                     # FastAPI REST API & Static Frontend Mount
+│   └── database.py                # SQLite Persistence Layer & CRUD Handlers
+├── data/
+│   ├── bank-full.csv              # UCI Bank Marketing Dataset (45,211 rows)
+│   └── smartbank.db               # SQLite 3 Database Engine
+├── frontend/
+│   ├── index.html                 # Complete PWA & Web Application UI
+│   ├── styles.css                 # Dark Fintech Enterprise Design System
+│   ├── app.js                     # Master Client Routing & State Controller
+│   ├── manifest.json              # Web App Manifest
+│   └── sw.js                      # Service Worker for Offline Resilience
+├── models/
+│   └── best_pipeline.joblib       # Trained Random Forest Preprocessor + Model
+├── notebooks/
+│   └── bank_marketing_analysis.ipynb # End-to-end EDA, Training & Evaluation Notebook
+├── outputs/
+│   ├── metrics.json               # Real Evaluation Benchmark Metrics
+│   ├── eda_summary.json           # Dataset Statistics Summary
+│   ├── feature_importance.json    # Ranked Predictive Signals
+│   ├── confusion_matrix.png       # Test Partition Confusion Matrix Plot
+│   ├── model_comparison.png       # LR vs RF Metric Comparison Plot
+│   └── roc_curve.png              # ROC Curve Plot
+├── src/
+│   ├── train.py                   # Reproducible ML Training Pipeline
+│   └── seed_db.py                 # SQLite Database Seeder Script
+├── requirements.txt               # Python Dependencies
+└── README.md                      # Comprehensive Project Documentation
 ```
 
 ---
 
-## 17. Assumptions & Limitations
-1. **Historical Static Dataset:** Data originates from previous Portuguese banking campaigns; macroeconomic changes (interest rates, inflation) alter baseline subscription propensity.
-2. **Missing In-Session Context:** Excluded duration prevents knowing if customer engaged in deep dialogue, strictly conforming to the pre-contact constraint.
-3. **Correlation vs. Causation:** Feature importance highlights predictive patterns, not direct levers to induce deposit opening.
+## 🎤 8. Gupio Interview Presentation Summary
 
----
-
-## 18. Future Improvements & Roadmap
-* **Phase 2 — Explainability & Tuning:** SHAP (SHapley Additive exPlanations) values for individual prediction explainability and Bayesian Hyperparameter optimization.
-* **Phase 3 — Operational Integration:** Containerization with Docker and automated CRM webhook trigger integration.
-* **Phase 4 — MLOps & Continuous Learning:** Automated data drift monitoring, PSI (Population Stability Index) tracking, and live A/B campaign uplift testing.
-
----
-**Author:** Smitha Srinivas  
-**Repository:** [https://github.com/smitha2422/SmartBank-ai](https://github.com/smitha2422/SmartBank-ai)
+1. **The Business Problem:** Indiscriminate bank cold calling wastes agent hours and causes customer fatigue. SmartBank AI predicts subscription likelihood before contact to optimize limited calling capacity.
+2. **Leakage Guard:** We strictly excluded `duration` and 4 other in-campaign attributes because call length is physically impossible to know before customer pickup.
+3. **Class Imbalance:** Only 11.7% of customers subscribe. Naive models get 88.3% accuracy but zero business value. We trained a cost-sensitive Random Forest with `class_weight='balanced'` and evaluated on F1 and ROC-AUC.
+4. **Campaign Optimizer:** Rather than stopping at abstract probabilities, the platform ranks leads against a capacity constraint (e.g. 2,000 calls), delivering a **3.8x efficiency lift** over random calling.
+5. **Responsible AI:** Feature weights are presented as **predictive associations**, not causal levers, reinforced with an embedded SQLite audit trail.
