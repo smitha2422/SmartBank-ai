@@ -30,6 +30,8 @@ from backend.database import (
     get_admin_analytics,
     list_customers,
     get_customer_by_id,
+    get_customer_financial_profile,
+    verify_customer_deposit_simulation,
     create_customer,
     log_assessment,
     get_recent_assessments,
@@ -140,6 +142,13 @@ class OptimizerRequest(BaseModel):
     pool_size: int = Field(5000, ge=100, le=10000, description="Customer evaluation pool size", example=5000)
     analyst_user: Optional[str] = Field("Campaign Analyst", example="Alex Mercer")
 
+class DepositVerificationRequest(BaseModel):
+    customer_id: Optional[str] = Field(None, description="Customer ID identifier", example="CUST-001")
+    customer_id_or_email: Optional[str] = Field(None, description="Customer ID, email, or name identifier", example="customer@smartbank.ai")
+    deposit_amount: float = Field(..., gt=0, description="Proposed deposit amount in euros", example=5000.0)
+    tenure_months: Optional[int] = Field(12, description="Proposed tenure in months (6, 12, 24, 36)", example=12)
+    term_months: Optional[int] = Field(None, description="Alternative field for tenure in months", example=12)
+
 # -------------------------------------------------------------
 # HEALTH CHECK
 # -------------------------------------------------------------
@@ -238,6 +247,88 @@ def admin_delete_employee(user_id: int):
 def get_admin_system_analytics():
     """Returns comprehensive system analytics, staff activity, and SQLite storage stats."""
     return get_admin_analytics()
+
+# -------------------------------------------------------------
+# CUSTOMER BANKING PORTAL & AI PRE-DEPOSIT VERIFICATION
+# -------------------------------------------------------------
+@app.get("/api/customer/profile/{identifier}", tags=["Customer Banking Portal"])
+def get_customer_profile(identifier: str):
+    """
+    Retrieves the verified banking profile for a customer including
+    salary, housing loan EMI, personal loan EMI, DTI ratio, AI deposit limits, and failure indicators.
+    """
+    profile = get_customer_financial_profile(identifier)
+    if not profile:
+        raise HTTPException(status_code=404, detail=f"Customer with ID/email '{identifier}' not found.")
+    res = dict(profile)
+    res["status"] = "success"
+    res["customer"] = profile
+    return res
+
+@app.get("/api/customer/profile", tags=["Customer Banking Portal"])
+def get_default_customer_profile():
+    """Retrieves default active customer banking profile."""
+    profile = get_customer_financial_profile("customer@smartbank.ai")
+    if not profile:
+        raise HTTPException(status_code=404, detail="No customer profile found.")
+    res = dict(profile)
+    res["status"] = "success"
+    res["customer"] = profile
+    return res
+
+@app.post("/api/customer/verify-deposit", tags=["Customer Banking Portal"])
+def verify_deposit_capacity(req: DepositVerificationRequest):
+    """
+    AI Safety Verification Engine:
+    Validates a customer's proposed term deposit before execution.
+    Checks liquidity distress risk, salary and EMI debt burden, emergency reserves,
+    and returns predictive failure diagnostics to ensure zero financial damage.
+    """
+    try:
+        ident = req.customer_id or req.customer_id_or_email or "customer@smartbank.ai"
+        months = req.tenure_months or req.term_months or 12
+        result = verify_customer_deposit_simulation(
+            customer_id_or_email=ident,
+            deposit_amount=req.deposit_amount,
+            term_months=months
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
+
+@app.get("/api/ai/failure-risk/{identifier}", tags=["AI Risk Engine"])
+def get_failure_risk_diagnostics(identifier: str):
+    """
+    Predicts financial distress failure signals, cashflow vulnerabilities,
+    and friction reasons for a specific customer profile.
+    """
+    cust = get_customer_financial_profile(identifier)
+    if not cust:
+        raise HTTPException(status_code=404, detail="Customer not found.")
+    
+    return {
+        "customer_id": cust.get("customer_id"),
+        "name": cust.get("name"),
+        "failure_distress_risk_score": cust.get("risk_failure_score"),
+        "risk_failure_score": cust.get("risk_failure_score"),
+        "risk_failure_pct": cust.get("risk_failure_pct"),
+        "distress_level": cust.get("fail_category", "SAFE_LOW_DISTRESS_RISK"),
+        "fail_category": cust.get("fail_category"),
+        "safety_badge": cust.get("safety_badge"),
+        "dti_ratio_pct": cust.get("dti_ratio_pct"),
+        "monthly_emi_burden": cust.get("total_monthly_emi"),
+        "monthly_salary": cust.get("salary_monthly"),
+        "emergency_reserve_buffer": cust.get("emergency_liquidity_reserve"),
+        "signals": cust.get("fail_signals", []),
+        "predictive_failure_signals": cust.get("fail_signals", []),
+        "prevention_recommendations": [
+            "Maintain minimum 1.5x monthly salary liquidity buffer at all times.",
+            "If DTI > 35%, cap term deposits to under 40% of disposable balance.",
+            "Verify customer credit standing before recommending long-term locks (24+ months)."
+        ]
+    }
 
 # -------------------------------------------------------------
 # SYSTEM HEALTH & TELEMETRY

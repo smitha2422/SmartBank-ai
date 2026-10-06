@@ -50,8 +50,8 @@
       <!-- Sign In Form -->
       <form id="signin-form" onsubmit="handleLogin(event)" class="auth-form-body">
         <div class="demo-quick-roles">
-          <span class="quick-label">Quick Sign-In Accounts:</span>
-          <div class="role-button-group">
+          <span class="quick-label">Select Account Role:</span>
+          <div class="role-button-group role-button-group-3">
             <button type="button" class="btn-role" onclick="autofillLogin('analyst')">
               <span class="role-icon">📊</span>
               <div class="role-texts">
@@ -66,11 +66,18 @@
                 <small>admin@smartbank.ai</small>
               </div>
             </button>
+            <button type="button" class="btn-role" onclick="autofillLogin('customer')">
+              <span class="role-icon">👤</span>
+              <div class="role-texts">
+                <strong>Verified Customer</strong>
+                <small>customer@smartbank.ai</small>
+              </div>
+            </button>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="login-email">Work Email</label>
+          <label for="login-email">Account Email</label>
           <input type="email" id="login-email" required placeholder="name@smartbank.ai" value="analyst@smartbank.ai">
         </div>
         <div class="form-group">
@@ -89,25 +96,26 @@
       <!-- Register Form -->
       <form id="register-form" onsubmit="handleRegister(event)" class="auth-form-body hidden">
         <div class="form-group">
-          <label for="reg-name">Employee Full Name *</label>
+          <label for="reg-name">Full Name *</label>
           <input type="text" id="reg-name" required placeholder="e.g. Marcus Brody">
         </div>
 
         <div class="form-group">
-          <label for="reg-email">Work Email Address *</label>
+          <label for="reg-email">Email Address *</label>
           <input type="email" id="reg-email" required placeholder="marcus.brody@smartbank.ai">
         </div>
 
         <div class="form-row-2">
           <div class="form-group">
-            <label for="reg-role">Staff Role *</label>
+            <label for="reg-role">Role *</label>
             <select id="reg-role" required>
               <option value="Campaign Analyst" selected>Campaign Analyst</option>
               <option value="Administrator">Administrator</option>
+              <option value="Customer">Banking Customer</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="reg-dept">Department</label>
+            <label for="reg-dept">Department / Account Type</label>
             <input type="text" id="reg-dept" placeholder="Retail Banking" value="Campaign Intelligence">
           </div>
         </div>
@@ -155,6 +163,15 @@
 
       <nav class="sidebar-nav">
         
+        <!-- CUSTOMER SPECIFIC SECTION (Visible to Customer Role) -->
+        <div id="sidebar-customer-section" class="customer-only-block hidden">
+          <div class="nav-group-label text-emerald">MY BANKING & DEPOSITS</div>
+          <button type="button" class="nav-item customer-nav-item" data-view="view-customer-portal" onclick="navigateTo('view-customer-portal')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+            <span>Verified Banking Hub</span>
+          </button>
+        </div>
+
         <!-- ADMIN SPECIFIC SECTION (Visible to Administrator) -->
         <div id="sidebar-admin-section" class="admin-only-block hidden">
           <div class="nav-group-label text-cyan">ADMINISTRATION & STAFF</div>
@@ -164,54 +181,58 @@
           </button>
         </div>
 
-        <div class="nav-group-label">CAMPAIGN WORKSPACE</div>
-        
-        <button type="button" class="nav-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>Overview Dashboard</span>
-        </button>
+        <div id="sidebar-campaign-section">
+          <div class="nav-group-label">CAMPAIGN WORKSPACE</div>
+          
+          <button type="button" class="nav-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Overview Dashboard</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-customers" onclick="navigateTo('view-customers')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          <span>Customer Directory</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-customers" onclick="navigateTo('view-customers')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span>Customer Directory</span>
+          </button>
 
-        <button type="button" class="nav-item highlight-nav" data-view="view-assessment" onclick="navigateTo('view-assessment')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-          <span>New AI Assessment</span>
-        </button>
+          <button type="button" class="nav-item highlight-nav" data-view="view-assessment" onclick="navigateTo('view-assessment')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+            <span>New AI Assessment</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-optimizer" onclick="navigateTo('view-optimizer')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <span>Campaign Optimizer</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-optimizer" onclick="navigateTo('view-optimizer')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span>Campaign Optimizer</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-history" onclick="navigateTo('view-history')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
-          <span>Prediction History</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-history" onclick="navigateTo('view-history')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+            <span>Prediction History</span>
+          </button>
+        </div>
 
-        <div class="nav-group-label">AI GOVERNANCE & TELEMETRY</div>
+        <div id="sidebar-telemetry-section">
+          <div class="nav-group-label">AI GOVERNANCE & TELEMETRY</div>
 
-        <button type="button" class="nav-item" data-view="view-performance" onclick="navigateTo('view-performance')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>Model Performance</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-performance" onclick="navigateTo('view-performance')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Model Performance</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-explainability" onclick="navigateTo('view-explainability')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>Explainability Signals</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-explainability" onclick="navigateTo('view-explainability')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span>Explainability Signals</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          <span>Campaign Learning</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Campaign Learning</span>
+          </button>
 
-        <button type="button" class="nav-item" data-view="view-health" onclick="navigateTo('view-health')">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          <span>Model Health & Drift</span>
-        </button>
+          <button type="button" class="nav-item" data-view="view-health" onclick="navigateTo('view-health')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Model Health & Drift</span>
+          </button>
+        </div>
 
         <button type="button" class="nav-item" data-view="view-settings" onclick="navigateTo('view-settings')">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -280,6 +301,208 @@
 
       <!-- DYNAMIC VIEWS CONTAINER -->
       <div class="views-wrapper">
+
+        <!-- ========================================================= -->
+        <!-- VIEW: CUSTOMER BANKING PORTAL & AI PRE-DEPOSIT SIMULATOR  -->
+        <!-- ========================================================= -->
+        <section id="view-customer-portal" class="view-section">
+          <!-- Customer Header Profile -->
+          <div class="customer-hero-card">
+            <div class="customer-hero-left">
+              <div class="cust-avatar-large" id="cust-portal-avatar">AP</div>
+              <div class="cust-hero-details">
+                <div class="cust-name-row">
+                  <h2 class="cust-hero-name" id="cust-portal-name">Arthur Pendelton</h2>
+                  <span class="kyc-badge" id="cust-portal-kyc">✓ KYC VERIFIED</span>
+                  <span class="credit-badge" id="cust-portal-credit">CLEAN CREDIT PROFILE</span>
+                </div>
+                <div class="cust-meta-row">
+                  <span>Account: <strong class="font-mono text-cyan" id="cust-portal-acc">SB-88219482</strong></span>
+                  <span>•</span>
+                  <span>Occupation: <strong id="cust-portal-job">Retired Executive</strong></span>
+                  <span>•</span>
+                  <span>Age: <strong id="cust-portal-age">64y</strong></span>
+                  <span>•</span>
+                  <span>Safety Guard: <strong class="text-emerald">Zero-Distress Protection Active</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="customer-hero-right">
+              <button type="button" class="btn-ghost btn-sm" onclick="refreshCustomerPortalData()">🔄 Refresh Account Data</button>
+            </div>
+          </div>
+
+          <!-- Financial Health KPI Grid -->
+          <div class="kpi-grid mt-4">
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-blue-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Available Account Balance</span>
+                <strong class="kpi-value text-cyan" id="cust-kpi-balance">€4,800.00</strong>
+                <span class="kpi-subtext">Current liquid funds</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-emerald-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Monthly Salary / Income</span>
+                <strong class="kpi-value text-emerald" id="cust-kpi-salary">€3,800.00</strong>
+                <span class="kpi-subtext">Verified recurring monthly cashflow</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-purple-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Total Monthly EMIs</span>
+                <strong class="kpi-value text-purple" id="cust-kpi-emi">€0.00 / mo</strong>
+                <span class="kpi-subtext" id="cust-kpi-emi-sub">Housing: €0 | Personal: €0</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-wrap bg-amber-glow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <div class="kpi-data">
+                <span class="kpi-label">Debt-to-Income (DTI) Ratio</span>
+                <strong class="kpi-value text-emerald" id="cust-kpi-dti">0.0%</strong>
+                <span class="kpi-subtext" id="cust-kpi-dti-sub">Safe range (&lt;35% threshold)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deposit Limit Capacity & Multi-Tenure Projections -->
+          <div class="grid-2col mt-4">
+            <!-- Left: AI Safe Deposit Capacity Card -->
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-title">🛡️ AI Safe Deposit Limit & Capacity</h3>
+                  <p class="card-subtitle">AI-calculated maximum deposit bounds protecting your living expenses</p>
+                </div>
+                <span class="badge-priority badge-high" id="cust-safety-badge">AI VERIFIED SAFE</span>
+              </div>
+
+              <div class="deposit-limits-box mt-3">
+                <div class="limit-stat-row">
+                  <div>
+                    <span class="text-xs text-muted block">Maximum Safe Deposit Ceiling:</span>
+                    <strong class="font-mono text-cyan text-lg" id="cust-max-limit">€12,500.00</strong>
+                  </div>
+                  <div>
+                    <span class="text-xs text-muted block">AI Optimal Recommended Deposit:</span>
+                    <strong class="font-mono text-emerald text-lg" id="cust-rec-deposit">€4,200.00</strong>
+                  </div>
+                </div>
+                <div class="limit-stat-row mt-3 pt-3 border-t border-subtle">
+                  <div>
+                    <span class="text-xs text-muted block">Emergency Reserve Buffer Protected:</span>
+                    <strong class="font-mono text-amber" id="cust-emergency-reserve">€5,700.00</strong>
+                  </div>
+                  <div>
+                    <span class="text-xs text-muted block">Net Disposable Monthly Cashflow:</span>
+                    <strong class="font-mono text-main" id="cust-net-disposable">€3,800.00 / mo</strong>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="text-sm font-semibold text-cyan mt-4">Projected Term Deposit Guaranteed Returns:</h4>
+              <div class="table-responsive mt-2">
+                <table class="data-table text-xs">
+                  <thead>
+                    <tr><th>Tenure</th><th>Annual Rate</th><th>Projected Interest</th><th>Total Maturity</th></tr>
+                  </thead>
+                  <tbody id="cust-yield-table-body">
+                    <tr><td>12 Months</td><td><strong class="text-cyan">4.25% p.a.</strong></td><td class="text-emerald font-mono">+€178.50</td><td class="font-mono font-bold">€4,378.50</td></tr>
+                    <tr><td>24 Months</td><td><strong class="text-cyan">4.60% p.a.</strong></td><td class="text-emerald font-mono">+€386.40</td><td class="font-mono font-bold">€4,586.40</td></tr>
+                    <tr><td>36 Months</td><td><strong class="text-cyan">4.85% p.a.</strong></td><td class="text-emerald font-mono">+€611.10</td><td class="font-mono font-bold">€4,811.10</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right: Interactive Pre-Deposit AI Verification & Failure Simulator -->
+            <div class="glass-card">
+              <div class="card-header-flex">
+                <div>
+                  <h3 class="card-title">🔍 Pre-Deposit AI Verification Simulator</h3>
+                  <p class="card-subtitle">Verify your planned deposit amount to ensure zero financial strain or early-break penalties</p>
+                </div>
+              </div>
+
+              <form id="form-simulate-deposit" onsubmit="handleSimulateDeposit(event)" class="mt-3">
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="sim-deposit-amount">Planned Deposit Amount (€) *</label>
+                    <input type="number" id="sim-deposit-amount" required min="100" max="100000" step="50" value="3000">
+                  </div>
+                  <div class="form-group">
+                    <label for="sim-deposit-tenure">Deposit Tenure *</label>
+                    <select id="sim-deposit-tenure" required>
+                      <option value="6">6 Months (3.80% p.a.)</option>
+                      <option value="12" selected>12 Months (4.25% p.a.)</option>
+                      <option value="24">24 Months (4.60% p.a.)</option>
+                      <option value="36">36 Months (4.85% p.a.)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" id="btn-simulate-submit" class="btn-primary btn-block mt-2">
+                  <span class="btn-text">⚡ Run Pre-Deposit AI Safety Check</span>
+                  <div class="spinner hidden" id="sim-spinner"></div>
+                </button>
+              </form>
+
+              <!-- Simulation Result Output -->
+              <div id="sim-result-box" class="verification-result-container mt-4">
+                <div class="verdict-banner banner-emerald" id="sim-verdict-banner">
+                  <strong id="sim-verdict-title">✅ AI Verified — Safe Deposit Capacity Confirmed</strong>
+                  <span class="text-xs block mt-1" id="sim-verdict-sub">Zero cashflow distress risk detected. Living expense reserves remain fully intact.</span>
+                </div>
+
+                <div class="sim-metrics-grid mt-3">
+                  <div class="sim-metric-card">
+                    <span class="sim-label">Failure / Distress Risk:</span>
+                    <strong class="sim-value text-emerald font-mono" id="sim-risk-score">6.5%</strong>
+                    <span class="text-xs text-muted">Safe Low Risk</span>
+                  </div>
+                  <div class="sim-metric-card">
+                    <span class="sim-label">Post-Deposit Balance:</span>
+                    <strong class="sim-value text-cyan font-mono" id="sim-post-balance">€1,800.00</strong>
+                    <span class="text-xs text-muted">Liquid reserve retained</span>
+                  </div>
+                  <div class="sim-metric-card">
+                    <span class="sim-label">Expected Maturity Payout:</span>
+                    <strong class="sim-value text-emerald font-mono" id="sim-maturity-payout">€3,127.50</strong>
+                    <span class="text-xs text-muted" id="sim-interest-gained">+€127.50 interest yield</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <span class="text-xs font-semibold text-cyan block mb-1">AI Safety & Predictive Failure Diagnostics:</span>
+                  <div class="signals-box" id="sim-signals-list">
+                    <div class="signal-item">
+                      <span>Liquidity Protection</span>
+                      <strong class="signal-pos">✓ Surplus Buffer Maintained</strong>
+                    </div>
+                    <div class="signal-item">
+                      <span>Debt Service Load</span>
+                      <strong class="signal-pos">✓ 0% EMI Debt Ratio</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <!-- ========================================================= -->
         <!-- VIEW: ADMIN & STAFF ANALYTICS (ADMINISTRATOR ONLY)        -->

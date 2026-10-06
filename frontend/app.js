@@ -124,20 +124,39 @@ function showAppShell() {
 
     // Role-based navigation visibility
     const adminNavSection = document.getElementById("sidebar-admin-section");
-    if (adminNavSection) {
-      if (currentUser.role === "Administrator") {
-        adminNavSection.classList.remove("hidden");
-        loadAdminData();
-      } else {
-        adminNavSection.classList.add("hidden");
-        if (window.location.hash === "#view-admin") {
-          navigateTo("view-dashboard");
-        }
+    const customerNavSection = document.getElementById("sidebar-customer-section");
+    const campaignNavSection = document.getElementById("sidebar-campaign-section");
+    const telemetryNavSection = document.getElementById("sidebar-telemetry-section");
+
+    if (currentUser.role === "Administrator") {
+      if (adminNavSection) adminNavSection.classList.remove("hidden");
+      if (customerNavSection) customerNavSection.classList.add("hidden");
+      if (campaignNavSection) campaignNavSection.classList.remove("hidden");
+      if (telemetryNavSection) telemetryNavSection.classList.remove("hidden");
+      loadAdminData();
+      if (!window.location.hash || window.location.hash === "#view-customer-portal") {
+        navigateTo("view-admin");
+      }
+    } else if (currentUser.role === "Customer") {
+      if (adminNavSection) adminNavSection.classList.add("hidden");
+      if (customerNavSection) customerNavSection.classList.remove("hidden");
+      if (campaignNavSection) campaignNavSection.classList.add("hidden");
+      if (telemetryNavSection) telemetryNavSection.classList.add("hidden");
+      loadCustomerPortalData();
+      navigateTo("view-customer-portal");
+    } else {
+      // Campaign Analyst
+      if (adminNavSection) adminNavSection.classList.add("hidden");
+      if (customerNavSection) customerNavSection.classList.add("hidden");
+      if (campaignNavSection) campaignNavSection.classList.remove("hidden");
+      if (telemetryNavSection) telemetryNavSection.classList.remove("hidden");
+      if (!window.location.hash || window.location.hash === "#view-admin" || window.location.hash === "#view-customer-portal") {
+        navigateTo("view-dashboard");
       }
     }
   }
   
-  // Load initial view data
+  // Load initial workspace data
   loadDashboardData();
   fetchCustomers();
   runCampaignOptimizer();
@@ -175,6 +194,9 @@ function autofillLogin(role) {
   if (role === "admin") {
     emailInput.value = "admin@smartbank.ai";
     passInput.value = "admin123";
+  } else if (role === "customer") {
+    emailInput.value = "customer@smartbank.ai";
+    passInput.value = "cust123";
   } else {
     emailInput.value = "analyst@smartbank.ai";
     passInput.value = "analyst123";
@@ -217,6 +239,9 @@ async function handleLogin(e) {
     
     if (currentUser.role === "Administrator") {
       navigateTo("view-admin");
+    } else if (currentUser.role === "Customer") {
+      navigateTo("view-customer-portal");
+      loadCustomerPortalData();
     } else {
       navigateTo("view-dashboard");
     }
@@ -263,6 +288,9 @@ async function handleRegister(e) {
     
     if (currentUser.role === "Administrator") {
       navigateTo("view-admin");
+    } else if (currentUser.role === "Customer") {
+      navigateTo("view-customer-portal");
+      loadCustomerPortalData();
     } else {
       navigateTo("view-dashboard");
     }
@@ -458,6 +486,7 @@ async function handleAdminDeleteEmployee(userId, userName) {
 // 2. VIEW NAVIGATION & ROUTING
 // -------------------------------------------------------------
 const PAGE_TITLES = {
+  "view-customer-portal": { title: "Verified Customer Banking Hub", subtitle: "SmartBank AI / Customer Portal & Safe Deposit Simulator" },
   "view-admin": { title: "Staff & System Analytics", subtitle: "SmartBank AI / Admin Center" },
   "view-dashboard": { title: "Campaign Intelligence Dashboard", subtitle: "SmartBank AI / Overview" },
   "view-customers": { title: "Customer Intelligence Directory", subtitle: "SmartBank AI / Customers" },
@@ -1162,3 +1191,282 @@ function openGupioTour() {
   showToast("Interview Walkthrough: 1. Leakage Guard -> 2. Propensity Engine -> 3. Campaign Optimizer -> 4. SQLite Audit.", "info");
   navigateTo("view-performance");
 }
+
+// -------------------------------------------------------------
+// 10. VERIFIED CUSTOMER BANKING PORTAL & PRE-DEPOSIT SIMULATOR
+// -------------------------------------------------------------
+let currentCustomerProfile = null;
+
+async function loadCustomerPortalData() {
+  try {
+    const identifier = (currentUser && currentUser.email) ? currentUser.email : "customer@smartbank.ai";
+    const res = await fetch(`${API_BASE_URL}/api/customer/profile/${encodeURIComponent(identifier)}`);
+    if (!res.ok) {
+      // fallback to general profile
+      const fallbackRes = await fetch(`${API_BASE_URL}/api/customer/profile`);
+      if (fallbackRes.ok) {
+        const fallbackData = await fallbackRes.json();
+        renderCustomerPortalData(fallbackData);
+      }
+      return;
+    }
+    const data = await res.json();
+    renderCustomerPortalData(data);
+  } catch (err) {
+    console.error("Error loading customer profile:", err);
+  }
+}
+
+function renderCustomerPortalData(data) {
+  if (!data) return;
+  currentCustomerProfile = data;
+
+  // 1. Hero Card
+  const avatarEl = document.getElementById("cust-portal-avatar");
+  if (avatarEl) {
+    const initials = (data.name || "AP").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+    avatarEl.textContent = initials;
+  }
+  const nameEl = document.getElementById("cust-portal-name");
+  if (nameEl) nameEl.textContent = data.name || "Arthur Pendelton";
+
+  const kycEl = document.getElementById("cust-portal-kyc");
+  if (kycEl) {
+    kycEl.textContent = data.kyc_verified ? "✓ KYC VERIFIED" : "PENDING KYC";
+  }
+
+  const creditEl = document.getElementById("cust-portal-credit");
+  if (creditEl) {
+    if (data.credit_default === "yes") {
+      creditEl.textContent = "⚠️ CREDIT DEFAULT RISK RECORDED";
+      creditEl.className = "credit-badge credit-badge-danger";
+    } else {
+      creditEl.textContent = "CLEAN CREDIT PROFILE";
+      creditEl.className = "credit-badge";
+    }
+  }
+
+  const accEl = document.getElementById("cust-portal-acc");
+  if (accEl) accEl.textContent = data.account_number || "SB-88219482";
+
+  const jobEl = document.getElementById("cust-portal-job");
+  if (jobEl) jobEl.textContent = (data.job || "management").charAt(0).toUpperCase() + (data.job || "management").slice(1);
+
+  const ageEl = document.getElementById("cust-portal-age");
+  if (ageEl) ageEl.textContent = `${data.age || 40}y`;
+
+  // 2. Financial KPI Cards
+  const balanceEl = document.getElementById("cust-kpi-balance");
+  if (balanceEl) balanceEl.textContent = `€${Number(data.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const salaryEl = document.getElementById("cust-kpi-salary");
+  if (salaryEl) salaryEl.textContent = `€${Number(data.salary_monthly || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / mo`;
+
+  const emiEl = document.getElementById("cust-kpi-emi");
+  if (emiEl) emiEl.textContent = `€${Number(data.total_emi_monthly || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / mo`;
+
+  const emiSubEl = document.getElementById("cust-kpi-emi-sub");
+  if (emiSubEl) {
+    emiSubEl.textContent = `Housing: €${Math.round(data.housing_emi || 0)} | Personal: €${Math.round(data.personal_loan_emi || 0)}`;
+  }
+
+  const dtiEl = document.getElementById("cust-kpi-dti");
+  const dtiSubEl = document.getElementById("cust-kpi-dti-sub");
+  if (dtiEl) {
+    dtiEl.textContent = `${data.dti_ratio_pct || 0}%`;
+    if (data.dti_ratio_pct > 40) {
+      dtiEl.className = "kpi-value text-rose";
+      if (dtiSubEl) dtiSubEl.textContent = "⚠️ High debt burden (>40% threshold)";
+    } else if (data.dti_ratio_pct > 25) {
+      dtiEl.className = "kpi-value text-amber";
+      if (dtiSubEl) dtiSubEl.textContent = "Moderate debt load (25-40%)";
+    } else {
+      dtiEl.className = "kpi-value text-emerald";
+      if (dtiSubEl) dtiSubEl.textContent = "Safe range (<25% threshold)";
+    }
+  }
+
+  // 3. AI Deposit Limits & Reserves
+  const maxLimitEl = document.getElementById("cust-max-limit");
+  if (maxLimitEl) maxLimitEl.textContent = `€${Number(data.max_deposit_limit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const recDepEl = document.getElementById("cust-rec-deposit");
+  if (recDepEl) recDepEl.textContent = `€${Number(data.recommended_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const resBufferEl = document.getElementById("cust-emergency-reserve");
+  if (resBufferEl) resBufferEl.textContent = `€${Number(data.emergency_liquidity_reserve || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const netDispEl = document.getElementById("cust-net-disposable");
+  if (netDispEl) netDispEl.textContent = `€${Number(data.disposable_income_monthly || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / mo`;
+
+  const safetyBadgeEl = document.getElementById("cust-safety-badge");
+  if (safetyBadgeEl) {
+    if (data.risk_failure_score < 25) {
+      safetyBadgeEl.textContent = "AI VERIFIED SAFE";
+      safetyBadgeEl.className = "badge-priority badge-high";
+    } else if (data.risk_failure_score < 50) {
+      safetyBadgeEl.textContent = "CAUTION ADVISED";
+      safetyBadgeEl.className = "badge-priority badge-medium";
+    } else {
+      safetyBadgeEl.textContent = "HIGH DISTRESS RISK";
+      safetyBadgeEl.className = "badge-priority badge-low";
+    }
+  }
+
+  // 4. Yield Projections Table
+  const recAmount = Number(data.recommended_deposit) || 2000;
+  const yieldTbody = document.getElementById("cust-yield-table-body");
+  if (yieldTbody) {
+    const rates = [
+      { tenure: "6 Months", rate: 3.80, months: 6 },
+      { tenure: "12 Months", rate: 4.25, months: 12 },
+      { tenure: "24 Months", rate: 4.60, months: 24 },
+      { tenure: "36 Months", rate: 4.85, months: 36 }
+    ];
+    yieldTbody.innerHTML = rates.map(r => {
+      const interest = Math.round(recAmount * (r.rate / 100) * (r.months / 12) * 100) / 100;
+      const maturity = Math.round((recAmount + interest) * 100) / 100;
+      return `
+        <tr>
+          <td><strong>${r.tenure}</strong></td>
+          <td><strong class="text-cyan">${r.rate}% p.a.</strong></td>
+          <td class="text-emerald font-mono">+€${interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          <td class="font-mono font-bold">€${maturity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // 5. Pre-fill simulator input
+  const simInput = document.getElementById("sim-deposit-amount");
+  if (simInput) {
+    simInput.value = Math.max(100, Math.round(data.recommended_deposit || 2000));
+  }
+}
+
+async function handleSimulateDeposit(e) {
+  if (e) e.preventDefault();
+  const amountInput = document.getElementById("sim-deposit-amount");
+  const tenureInput = document.getElementById("sim-deposit-tenure");
+  const spinner = document.getElementById("sim-spinner");
+  const btnText = document.querySelector("#btn-simulate-submit .btn-text");
+
+  const depositAmount = parseFloat(amountInput.value) || 0;
+  const tenureMonths = parseInt(tenureInput.value, 10) || 12;
+  const customerId = currentCustomerProfile ? currentCustomerProfile.customer_id : "CUST-001";
+
+  if (depositAmount <= 0) {
+    showToast("Please enter a valid deposit amount greater than €0.", "error");
+    return;
+  }
+
+  if (spinner) spinner.classList.remove("hidden");
+  if (btnText) btnText.textContent = "AI Safety Verification in Progress...";
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/customer/verify-deposit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer_id: customerId,
+        deposit_amount: depositAmount,
+        tenure_months: tenureMonths
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || "Simulation verification failed.");
+    }
+
+    // Render Simulation Outputs
+    const resultBox = document.getElementById("sim-result-box");
+    if (resultBox) resultBox.classList.remove("hidden");
+
+    const verdictBanner = document.getElementById("sim-verdict-banner");
+    const verdictTitle = document.getElementById("sim-verdict-title");
+    const verdictSub = document.getElementById("sim-verdict-sub");
+
+    if (data.verdict === "APPROVED_SAFE") {
+      if (verdictBanner) verdictBanner.className = "verdict-banner banner-emerald";
+      if (verdictTitle) verdictTitle.textContent = "✅ AI Verified — Safe Deposit Capacity Confirmed";
+      if (verdictSub) verdictSub.textContent = data.ai_financial_advice || "Zero cashflow distress risk detected. Living expense reserves remain fully intact.";
+    } else if (data.verdict === "APPROVED_WITH_CAUTION") {
+      if (verdictBanner) verdictBanner.className = "verdict-banner banner-amber";
+      if (verdictTitle) verdictTitle.textContent = "⚠️ Caution — Partial Emergency Buffer Erosion";
+      if (verdictSub) verdictSub.textContent = data.ai_financial_advice || "Deposit approved, but remaining liquidity is tighter than recommended emergency reserve buffer.";
+    } else {
+      if (verdictBanner) verdictBanner.className = "verdict-banner banner-rose";
+      if (verdictTitle) verdictTitle.textContent = "🛑 AI Warning — High Financial Distress Risk";
+      if (verdictSub) verdictSub.textContent = data.ai_financial_advice || "High risk of cashflow failure or deposit exceeds liquid balance.";
+    }
+
+    // Risk score
+    const riskScoreEl = document.getElementById("sim-risk-score");
+    if (riskScoreEl) {
+      riskScoreEl.textContent = `${data.failure_distress_risk_pct}%`;
+      riskScoreEl.className = data.failure_distress_risk_pct < 25 
+        ? "sim-value text-emerald font-mono" 
+        : (data.failure_distress_risk_pct < 50 ? "sim-value text-amber font-mono" : "sim-value text-rose font-mono");
+    }
+
+    // Post-deposit balance
+    const postBalEl = document.getElementById("sim-post-balance");
+    if (postBalEl) {
+      postBalEl.textContent = `€${Number(data.post_deposit_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    // Maturity payout
+    const maturityEl = document.getElementById("sim-maturity-payout");
+    if (maturityEl) {
+      maturityEl.textContent = `€${Number(data.projected_maturity_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    // Interest gained
+    const interestEl = document.getElementById("sim-interest-gained");
+    if (interestEl) {
+      interestEl.textContent = `+€${Number(data.projected_interest_earned).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} yield (${data.tenure_months}M @ ${data.annual_rate_pct}%)`;
+    }
+
+    // Diagnostic failure signals
+    const signalsList = document.getElementById("sim-signals-list");
+    if (signalsList) {
+      if (data.warning_signals && data.warning_signals.length > 0) {
+        signalsList.innerHTML = data.warning_signals.map(s => `
+          <div class="signal-item">
+            <span>Risk Signal</span>
+            <strong class="signal-neg">⚠️ ${s}</strong>
+          </div>
+        `).join("");
+      } else {
+        signalsList.innerHTML = `
+          <div class="signal-item">
+            <span>Liquidity Protection</span>
+            <strong class="signal-pos">✓ Surplus Reserve Buffer Maintained</strong>
+          </div>
+          <div class="signal-item">
+            <span>Debt Service Load</span>
+            <strong class="signal-pos">✓ Safe Debt-to-Income Ratio</strong>
+          </div>
+          <div class="signal-item">
+            <span>Default History</span>
+            <strong class="signal-pos">✓ Clean Credit Record</strong>
+          </div>
+        `;
+      }
+    }
+
+    showToast(`AI Simulation Complete: ${data.verdict.replace(/_/g, ' ')}`, data.is_safe_to_deposit ? "success" : "warning");
+  } catch (err) {
+    showToast(err.message, "error");
+  } finally {
+    if (spinner) spinner.classList.add("hidden");
+    if (btnText) btnText.textContent = "⚡ Run Pre-Deposit AI Safety Check";
+  }
+}
+
+function refreshCustomerPortalData() {
+  showToast("Refreshing live customer financial metrics & limits...", "info");
+  loadCustomerPortalData();
+}
+

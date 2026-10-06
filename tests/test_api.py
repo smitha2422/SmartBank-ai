@@ -1,5 +1,6 @@
 """
 SmartBank AI - API & Database Verification Test Suite
+Comprehensive testing for Auth, Admin, Campaign Engine, and Verified Customer Banking & Deposit Safety Simulator
 """
 import sys
 import os
@@ -42,6 +43,17 @@ def test_auth_login_admin():
     data = res.json()
     assert data["status"] == "authenticated"
     assert data["user"]["role"] == "Administrator"
+
+def test_auth_login_customer():
+    res = client.post("/api/auth/login", json={
+        "email": "customer@smartbank.ai",
+        "password": "cust123"
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "authenticated"
+    assert data["user"]["role"] == "Customer"
+    assert "Arthur" in data["user"]["name"]
 
 def test_auth_register_and_login():
     reg_email = "test.operator@smartbank.ai"
@@ -105,6 +117,53 @@ def test_admin_endpoints():
     assert res_del.status_code == 200
     assert res_del.json()["status"] == "deleted"
 
+def test_customer_profile_and_financials():
+    res = client.get("/api/customer/profile/customer@smartbank.ai")
+    assert res.status_code == 200
+    data = res.json()
+    assert "salary_monthly" in data
+    assert data["salary_monthly"] > 0
+    assert "account_number" in data
+    assert "total_emi_monthly" in data
+    assert "max_deposit_limit" in data
+    assert "recommended_deposit" in data
+    assert "emergency_liquidity_reserve" in data
+    assert data["kyc_verified"] == 1
+
+def test_customer_verify_deposit_safe():
+    res = client.post("/api/customer/verify-deposit", json={
+        "customer_id": "customer@smartbank.ai",
+        "deposit_amount": 1000.0,
+        "tenure_months": 12
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["is_safe_to_deposit"] is True
+    assert data["verdict"] in ["APPROVED_SAFE", "APPROVED_WITH_CAUTION"]
+    assert data["projected_maturity_amount"] > 1000.0
+    assert data["post_deposit_balance"] >= 0
+
+def test_customer_verify_deposit_excessive():
+    # Attempting to deposit 100,000 when balance is under 10,000
+    res = client.post("/api/customer/verify-deposit", json={
+        "customer_id": "CUST-001",
+        "deposit_amount": 100000.0,
+        "tenure_months": 12
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["is_safe_to_deposit"] is False
+    assert data["verdict"] == "REJECTED_INSUFFICIENT_FUNDS"
+    assert len(data["warning_signals"]) > 0
+
+def test_ai_failure_risk_diagnostics():
+    res = client.get("/api/ai/failure-risk/CUST-001")
+    assert res.status_code == 200
+    data = res.json()
+    assert "failure_distress_risk_score" in data
+    assert "distress_level" in data
+    assert "signals" in data
+
 def test_prediction_with_analyst_attribution():
     res = client.post("/api/predict", json={
         "customer_id": "CUST-VERIFY-01",
@@ -145,13 +204,22 @@ if __name__ == "__main__":
     test_auth_login_analyst()
     print("Running test_auth_login_admin...")
     test_auth_login_admin()
+    print("Running test_auth_login_customer...")
+    test_auth_login_customer()
     print("Running test_auth_register_and_login...")
     test_auth_register_and_login()
     print("Running test_admin_endpoints...")
     test_admin_endpoints()
+    print("Running test_customer_profile_and_financials...")
+    test_customer_profile_and_financials()
+    print("Running test_customer_verify_deposit_safe...")
+    test_customer_verify_deposit_safe()
+    print("Running test_customer_verify_deposit_excessive...")
+    test_customer_verify_deposit_excessive()
+    print("Running test_ai_failure_risk_diagnostics...")
+    test_ai_failure_risk_diagnostics()
     print("Running test_prediction_with_analyst_attribution...")
     test_prediction_with_analyst_attribution()
     print("Running test_optimizer_run...")
     test_optimizer_run()
-    print("\n All 7 API & Database Verification Tests PASSED Successfully!")
-
+    print("\n[SUCCESS] All 12 API & Database Verification Tests PASSED Successfully!")
