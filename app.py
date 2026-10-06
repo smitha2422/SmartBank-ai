@@ -279,12 +279,15 @@ def render_login_screen():
             if q_col1.button("📊 Campaign Analyst", use_container_width=True):
                 st.session_state["def_email"] = "analyst@smartbank.ai"
                 st.session_state["def_pass"] = "analyst123"
+                st.rerun()
             if q_col2.button("🛡️ Administrator", use_container_width=True):
                 st.session_state["def_email"] = "admin@smartbank.ai"
                 st.session_state["def_pass"] = "admin123"
+                st.rerun()
             if q_col3.button("👤 Verified Customer", use_container_width=True):
                 st.session_state["def_email"] = "customer@smartbank.ai"
                 st.session_state["def_pass"] = "cust123"
+                st.rerun()
                 
             email_val = st.session_state.get("def_email", "analyst@smartbank.ai")
             pass_val = st.session_state.get("def_pass", "analyst123")
