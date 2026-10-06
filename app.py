@@ -276,15 +276,15 @@ def render_login_screen():
             st.write("**Quick Sign-In Selection:**")
             q_col1, q_col2, q_col3 = st.columns(3)
             
-            if q_col1.button("📊 Campaign Analyst", use_container_width=True):
+            if q_col1.button("📊 Campaign Analyst", width="stretch"):
                 st.session_state["def_email"] = "analyst@smartbank.ai"
                 st.session_state["def_pass"] = "analyst123"
                 st.rerun()
-            if q_col2.button("🛡️ Administrator", use_container_width=True):
+            if q_col2.button("🛡️ Administrator", width="stretch"):
                 st.session_state["def_email"] = "admin@smartbank.ai"
                 st.session_state["def_pass"] = "admin123"
                 st.rerun()
-            if q_col3.button("👤 Verified Customer", use_container_width=True):
+            if q_col3.button("👤 Verified Customer", width="stretch"):
                 st.session_state["def_email"] = "customer@smartbank.ai"
                 st.session_state["def_pass"] = "cust123"
                 st.rerun()
@@ -295,7 +295,7 @@ def render_login_screen():
             email = st.text_input("Account Email", value=email_val)
             password = st.text_input("Password", type="password", value=pass_val)
             
-            if st.button("🚀 Sign In to Platform", type="primary", use_container_width=True):
+            if st.button("🚀 Sign In to Platform", type="primary", width="stretch"):
                 email_clean = email.strip().lower()
                 
                 # Check SQLite authentication
@@ -408,7 +408,7 @@ def render_sidebar():
         </div>
         """, unsafe_allow_html=True)
         
-        if st.button("🚪 Sign Out", use_container_width=True):
+        if st.button("🚪 Sign Out", width="stretch"):
             st.session_state["authenticated"] = False
             st.rerun()
             
@@ -491,7 +491,7 @@ def render_admin_dashboard_view():
         users_list = db.list_all_users()
         if users_list:
             u_df = pd.DataFrame(users_list)
-            st.dataframe(u_df, use_container_width=True, hide_index=True)
+            st.dataframe(u_df, width="stretch", hide_index=True)
         else:
             st.info("No registered users found.")
             
@@ -528,7 +528,7 @@ def render_admin_dashboard_view():
                 "housing", "loan", "salary_monthly", "total_monthly_emi", 
                 "max_deposit_limit", "risk_failure_score"
             ]]
-            st.dataframe(c_df, use_container_width=True, hide_index=True)
+            st.dataframe(c_df, width="stretch", hide_index=True)
         else:
             st.info("No customers found in database.")
             
@@ -540,7 +540,7 @@ def render_admin_dashboard_view():
                 "id", "customer_id", "customer_name", "analyst_name", 
                 "opportunity_score", "campaign_priority", "probability", "timestamp"
             ]]
-            st.dataframe(a_df, use_container_width=True, hide_index=True)
+            st.dataframe(a_df, width="stretch", hide_index=True)
         else:
             st.info("No assessments logged yet.")
             
@@ -553,7 +553,7 @@ def render_admin_dashboard_view():
         conn.close()
         if dep_rows:
             d_df = pd.DataFrame(dep_rows)
-            st.dataframe(d_df, use_container_width=True, hide_index=True)
+            st.dataframe(d_df, width="stretch", hide_index=True)
         else:
             st.info("No customer term deposits booked yet.")
             
@@ -562,7 +562,7 @@ def render_admin_dashboard_view():
         runs = db.get_optimizer_history(limit=25)
         if runs:
             r_df = pd.DataFrame(runs)
-            st.dataframe(r_df, use_container_width=True, hide_index=True)
+            st.dataframe(r_df, width="stretch", hide_index=True)
         else:
             st.info("No optimizer runs logged yet.")
 
@@ -677,7 +677,7 @@ def render_client_management_view():
                 "housing", "loan", "salary_monthly", "total_monthly_emi",
                 "max_deposit_limit", "risk_failure_pct", "safety_badge"
             ]]
-            st.dataframe(df_display, use_container_width=True, hide_index=True)
+            st.dataframe(df_display, width="stretch", hide_index=True)
         else:
             st.info("No clients found matching query.")
             
@@ -712,7 +712,7 @@ def render_client_management_view():
                 c_pdays = st.number_input("Days Passed (pdays, -1 for none)", min_value=-1, max_value=999, value=90)
                 c_prev = st.number_input("Previous Contacts Count", min_value=0, max_value=50, value=2)
                 
-            submitted = st.form_submit_button("Save Lead & Run AI Scoring", type="primary", use_container_width=True)
+            submitted = st.form_submit_button("Save Lead & Run AI Scoring", type="primary", width="stretch")
             if submitted:
                 client_data = {
                     "name": c_name, "email": c_email, "phone": c_phone,
@@ -781,9 +781,9 @@ def render_client_management_view():
                     
                 col_save, col_del = st.columns([3, 1])
                 with col_save:
-                    save_btn = st.form_submit_button("💾 Update Customer Record in SQLite", type="primary", use_container_width=True)
+                    save_btn = st.form_submit_button("💾 Update Customer Record in SQLite", type="primary", width="stretch")
                 with col_del:
-                    del_btn = st.form_submit_button("🗑️ Delete Lead", use_container_width=True)
+                    del_btn = st.form_submit_button("🗑️ Delete Lead", width="stretch")
                     
                 if save_btn:
                     upd_data = {
@@ -876,7 +876,7 @@ def render_assessment_view():
                 in_prev = st.number_input("Prior Campaign Contacts (previous)", min_value=0, max_value=50, value=int(d_prev))
                 
             cust_ref_name = st.text_input("Lead Name / Reference", value="Prospective Lead")
-            calc_btn = st.button("🔮 Score Customer Propensity", type="primary", use_container_width=True)
+            calc_btn = st.button("🔮 Score Customer Propensity", type="primary", width="stretch")
 
     with col_res:
         with st.container(border=True):
@@ -963,7 +963,7 @@ def render_assessment_view():
                 </div>
                 """, unsafe_allow_html=True)
                 
-            if st.button("💾 Save Assessment to SQLite DB", use_container_width=True):
+            if st.button("💾 Save Assessment to SQLite DB", width="stretch"):
                 db.log_assessment({
                     "customer_id": f"LEAD-{abs(hash(cust_ref_name)) % 90000 + 10000}",
                     "customer_name": cust_ref_name,
@@ -1018,7 +1018,7 @@ def render_optimizer_view():
         {"Queue Segment": "Priority C (Score 25-44)", "Allocated Slots": f"{tier_c:,}", "Expected Conversion Rate": "11.0%", "Projected Conversions": int(tier_c * 0.110), "Recommended Channel": "Automated Email + SMS Push"},
         {"Queue Segment": "Priority D (Score 0-24)", "Allocated Slots": f"{tier_d:,}", "Expected Conversion Rate": "2.8%", "Projected Conversions": int(tier_d * 0.028), "Recommended Channel": "Suppressed / Digital Retargeting"}
     ])
-    st.dataframe(q_df, use_container_width=True, hide_index=True)
+    st.dataframe(q_df, width="stretch", hide_index=True)
     
     if st.button("⚡ Save Optimizer Strategy to SQLite DB", type="primary"):
         db.log_optimizer_run(capacity, {"A": tier_a, "B": tier_b, "C": tier_c, "D": tier_d}, expected_conv, 0.32, lift, pool_size, st.session_state["user_name"])
@@ -1052,7 +1052,7 @@ def render_batch_csv_view():
             data=csv_sample,
             file_name="smartbank_sample_leads.csv",
             mime="text/csv",
-            use_container_width=True
+            width="stretch"
         )
         
     if uploaded_file is not None:
@@ -1076,7 +1076,7 @@ def render_batch_csv_view():
                 df = df.sort_values(by="opportunity_score", ascending=False)
                 
                 st.markdown("### 🎯 Scored & Ranked Leads")
-                st.dataframe(df, use_container_width=True, hide_index=True)
+                st.dataframe(df, width="stretch", hide_index=True)
                 
                 scored_csv = df.to_csv(index=False).encode('utf-8')
                 st.download_button(
@@ -1183,7 +1183,7 @@ def render_customer_failure_risk_view():
             sim_amt = st.number_input("Proposed Term Deposit Amount (€)", min_value=100.0, max_value=100000.0, value=float(cust.get("recommended_deposit", 3000.0)), step=250.0)
             sim_tenure = st.selectbox("Deposit Tenure", [6, 12, 24, 36], index=1, format_func=lambda x: f"{x} Months (Locked Period)")
             
-            test_btn = st.button("⚡ Run AI Safety & Distress Verification", type="primary", use_container_width=True)
+            test_btn = st.button("⚡ Run AI Safety & Distress Verification", type="primary", width="stretch")
             
     # Run simulation
     sim_res = db.verify_customer_deposit_simulation(st.session_state["user_email"], sim_amt, sim_tenure)
@@ -1228,7 +1228,7 @@ def render_customer_deposit_booking_view():
             b_amt = st.number_input("Deposit Principal Amount (€)", min_value=250.0, max_value=float(cust.get('balance', 50000.0)), value=float(min(cust.get('recommended_deposit', 2500.0), cust.get('balance', 2500.0))), step=250.0)
             b_tenure = st.selectbox("Select Lock-in Tenure", [12, 24, 36], format_func=lambda x: f"{x} Months @ {4.25 if x==12 else (4.60 if x==24 else 4.85)}% p.a.")
             
-            book_btn = st.button("🔒 Confirm & Book Term Deposit", type="primary", use_container_width=True)
+            book_btn = st.button("🔒 Confirm & Book Term Deposit", type="primary", width="stretch")
             
     with c2:
         with st.container(border=True):
@@ -1285,7 +1285,7 @@ def render_customer_certificates_view():
             "annual_rate", "interest_earned", "maturity_amount", 
             "status", "booked_at", "maturity_date"
         ]]
-        st.dataframe(d_df, use_container_width=True, hide_index=True)
+        st.dataframe(d_df, width="stretch", hide_index=True)
     else:
         st.info("No active term deposits found. Navigate to 'Guaranteed Term Deposit Booking' to open a fixed deposit!")
 
@@ -1326,7 +1326,7 @@ def render_user_profile_settings_view():
             with f2:
                 new_emi = st.number_input("Total Active Monthly EMIs (€)", min_value=0.0, max_value=50000.0, value=0.0, step=50.0)
                 
-        save_profile = st.form_submit_button("💾 Save Changes to SQLite Database", type="primary", use_container_width=True)
+        save_profile = st.form_submit_button("💾 Save Changes to SQLite Database", type="primary", width="stretch")
         if save_profile:
             if new_pass and new_pass != confirm_pass:
                 st.error("Passwords do not match!")
@@ -1399,7 +1399,7 @@ def render_performance_view():
             "Selection Status": "✅ Selected Champion"
         }
     ])
-    st.dataframe(comp_df, use_container_width=True, hide_index=True)
+    st.dataframe(comp_df, width="stretch", hide_index=True)
     
     st.markdown("### 📊 Performance Visualizations & Diagnostic Curves")
     img_c1, img_c2, img_c3 = st.columns(3)
@@ -1407,19 +1407,19 @@ def render_performance_view():
     with img_c1:
         st.markdown("##### Confusion Matrix (Unseen Test)")
         if os.path.exists("outputs/confusion_matrix.png"):
-            st.image("outputs/confusion_matrix.png", use_container_width=True)
+            st.image("outputs/confusion_matrix.png", width="stretch")
         else:
             st.info("Confusion matrix generated in outputs/")
     with img_c2:
         st.markdown("##### ROC Discrimination Curve")
         if os.path.exists("outputs/roc_curve.png"):
-            st.image("outputs/roc_curve.png", use_container_width=True)
+            st.image("outputs/roc_curve.png", width="stretch")
         else:
             st.info("ROC Curve generated in outputs/")
     with img_c3:
         st.markdown("##### Metric Benchmark Comparison")
         if os.path.exists("outputs/model_comparison.png"):
-            st.image("outputs/model_comparison.png", use_container_width=True)
+            st.image("outputs/model_comparison.png", width="stretch")
         else:
             st.info("Model comparison generated in outputs/")
             
@@ -1501,7 +1501,7 @@ def render_telemetry_view():
         {"Excluded / Approved Feature": "balance, default, housing, loan", "Leakage Classification": "✅ APPROVED (PRE-CONTACT)", "Business & ML Exclusion Rationale": "Core banking financial, liability, and debt profile present in core banking systems prior to contact."},
         {"Excluded / Approved Feature": "poutcome, pdays, previous", "Leakage Classification": "✅ APPROVED (PRE-CONTACT)", "Business & ML Exclusion Rationale": "Historical prior campaign outcomes available in bank relationship management history before launching new campaign."}
     ])
-    st.dataframe(leakage_table, use_container_width=True, hide_index=True)
+    st.dataframe(leakage_table, width="stretch", hide_index=True)
 
 # -------------------------------------------------------------
 # 10. MASTER CONTROLLER ROUTER
